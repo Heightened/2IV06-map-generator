@@ -16,6 +16,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(OBJDIR)
 
 all: $(PROGRAM)
 
+run: $(PROGRAM)
+	./$(PROGRAM)
+
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
