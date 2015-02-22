@@ -4,10 +4,13 @@
 
 #include "Window.h"
 
+#include <wx/spinbutt.h>
+#include <wx/glcanvas.h>
+
 wxIMPLEMENT_APP(GeneratorApp);
 
 bool GeneratorApp::OnInit() {
-    GeneratorFrame *frame = new GeneratorFrame("Build-an-Isle", wxPoint(100, 100), wxSize(800, 600));
+    GeneratorFrame* frame = new GeneratorFrame("Build-an-Isle", wxPoint(100, 100), wxSize(800, 600));
     return frame->Show(true);
 }
 
@@ -15,7 +18,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	
 	//Initialize Menu
 
-    wxMenu *menuFile = new wxMenu;
+    wxMenu* menuFile = new wxMenu;
     menuFile->Append(ID_New, "&New\tCtrl-N", "Reset parameters to generate a new type of map");
 	menuFile->Append(ID_Open, "&Open...\tCtrl-O", "Load previously saved parameters");
 	menuFile->Append(ID_Save, "&Save...\tCtrl-S", "Save parameters to generate similar maps at a later time");
@@ -26,10 +29,10 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
     menuFile->AppendSeparator();
     menuFile->Append(wxID_EXIT);
 
-    wxMenu *menuHelp = new wxMenu;
+    wxMenu* menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
 
-    wxMenuBar *menuBar = new wxMenuBar;
+    wxMenuBar* menuBar = new wxMenuBar;
     menuBar->Append( menuFile, "&File" );
     menuBar->Append( menuHelp, "&Help" );
 
@@ -39,6 +42,20 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 
     CreateStatusBar();
     SetStatusText("Welcome to Build-an-Isle!");
+
+	//Initialize Map preview
+
+	wxGLCanvas* mapPreview = new wxGLCanvas(this, -1, NULL, wxDefaultPosition, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()), 0, "Preview", wxNullPalette);
+	wxGLContext* glContext = new wxGLContext(mapPreview, NULL);
+
+	//Initialize Generation toolbox
+
+	wxPanel* toolboxPanel = new wxPanel(this, -1, wxPoint(this->GetClientSize().GetWidth()-120,0), wxSize(120, this->GetClientSize().GetHeight()), 0, "Generation Toolbox");
+
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->Add(new wxButton(toolboxPanel, -1, "Generate Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "generateButton"), 0, 0, 0);
+	sizer->Add(new wxButton(toolboxPanel, -1, "Export Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "exportButton"), 0, 0, 0);
+	SetSizer(sizer);
 }
 
 void GeneratorFrame::OnExit(wxCommandEvent& event) {
