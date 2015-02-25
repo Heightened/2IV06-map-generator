@@ -6,3 +6,8 @@
 * OpenGL
 * Glew
 * glm
+
+## License
+
+This project includes GNU LGPL code.
+See the `src/vendor/` directory for details.
