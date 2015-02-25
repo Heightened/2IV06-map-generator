@@ -3,6 +3,7 @@
 #include "Objects.h"
 
 #include <cmath>
+#include <cstdio>
 
 //Methods to set up buffers to contain for example vertex locations or similar attributes
 
