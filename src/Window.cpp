@@ -4,14 +4,16 @@
 
 #include "Window.h"
 
+#include "Canvas.h"
+
 #include <wx/spinbutt.h>
-#include <wx/glcanvas.h>
 
 wxIMPLEMENT_APP(GeneratorApp);
 
 bool GeneratorApp::OnInit() {
     GeneratorFrame* frame = new GeneratorFrame("Build-an-Isle", wxPoint(100, 100), wxSize(800, 600));
     return frame->Show(true);
+	printf("SAY SOMETHING DAMNIT");
 }
 
 GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(NULL, wxID_ANY, title, pos, size) {
@@ -45,8 +47,12 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 
 	//Initialize Map preview
 
-	wxGLCanvas* mapPreview = new wxGLCanvas(this, -1, NULL, wxDefaultPosition, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()), 0, "Preview", wxNullPalette);
+	wxLogStream(NULL);
+
+	std::cout << "let's do this";
+	Canvas* mapPreview = new Canvas(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()));
 	wxGLContext* glContext = new wxGLContext(mapPreview, NULL);
+	mapPreview->Initialize(glContext);
 
 	//Initialize Generation toolbox
 

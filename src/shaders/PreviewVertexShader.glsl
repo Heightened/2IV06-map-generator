@@ -18,9 +18,11 @@ uniform mat4 Model;
 uniform mat4 View;
 
 //Lighting uniforms
-uniform vec3 light;
+//uniform vec3 light;
 
 void main() {
+	vec3 light = vec3(10,20,5);
+
 	//Position of the vertex on the screen
 	gl_Position = Combined * vec4(vertex,1);
 	
@@ -30,7 +32,6 @@ void main() {
 	//Pass on unused inputs
 	fNormal = normal;
 	fColor = color;
-	fUvcoord = uvcoord;
 	
 	//Direction of reflecting light from vertex to the camera eye
 	eyeVector = vec3(0,0,0) - (View * Model * vec4(vertex,1)).xyz;
