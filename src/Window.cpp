@@ -4,18 +4,6 @@
 
 #include "Window.h"
 
-#include "Canvas.h"
-
-#include <wx/spinbutt.h>
-
-wxIMPLEMENT_APP(GeneratorApp);
-
-bool GeneratorApp::OnInit() {
-    GeneratorFrame* frame = new GeneratorFrame("Build-an-Isle", wxPoint(100, 100), wxSize(800, 600));
-    return frame->Show(true);
-	printf("SAY SOMETHING DAMNIT");
-}
-
 GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(NULL, wxID_ANY, title, pos, size) {
 	
 	//Initialize Menu
@@ -50,9 +38,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	wxLogStream(NULL);
 
 	std::cout << "let's do this";
-	Canvas* mapPreview = new Canvas(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()));
-	wxGLContext* glContext = new wxGLContext(mapPreview, NULL);
-	mapPreview->Initialize(glContext);
+	mapPreview = new Canvas(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()));
 
 	//Initialize Generation toolbox
 
@@ -62,6 +48,11 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	sizer->Add(new wxButton(toolboxPanel, -1, "Generate Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "generateButton"), 0, 0, 0);
 	sizer->Add(new wxButton(toolboxPanel, -1, "Export Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "exportButton"), 0, 0, 0);
 	SetSizer(sizer);
+}
+
+void GeneratorFrame::InitializeGL() {
+	glContext = new wxGLContext(mapPreview, NULL);
+	mapPreview->Initialize(glContext);
 }
 
 void GeneratorFrame::OnExit(wxCommandEvent& event) {
@@ -86,4 +77,22 @@ void GeneratorFrame::OnSave(wxCommandEvent& event) {
 
 void GeneratorFrame::OnExportMap(wxCommandEvent& event) {
     wxLogMessage("TODO");
+}
+
+wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
+    EVT_MENU(ID_New,   GeneratorFrame::OnNew)
+	EVT_MENU(ID_Open,   GeneratorFrame::OnOpen)
+	EVT_MENU(ID_Save,   GeneratorFrame::OnSave)
+	EVT_MENU(ID_Export,   GeneratorFrame::OnExportMap)
+    EVT_MENU(wxID_EXIT,  GeneratorFrame::OnExit)
+    EVT_MENU(wxID_ABOUT, GeneratorFrame::OnAbout)
+wxEND_EVENT_TABLE()
+
+wxIMPLEMENT_APP(GeneratorApp);
+
+bool GeneratorApp::OnInit() {
+    GeneratorFrame* frame = new GeneratorFrame("Build-an-Isle", wxPoint(100, 100), wxSize(800, 600));
+    bool init = frame->Show(true);
+	frame->InitializeGL();
+	return init;
 }
