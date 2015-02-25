@@ -4,12 +4,12 @@
     #include <wx/wx.h>
 #endif
 
-class GeneratorApp: public wxApp {
+class GeneratorApp : public wxApp {
 public:
 	virtual bool OnInit();
 };
 
-class GeneratorFrame: public wxFrame {
+class GeneratorFrame : public wxFrame {
 	void OnNew(wxCommandEvent& event);
 	void OnOpen(wxCommandEvent& event);
 	void OnSave(wxCommandEvent& event);

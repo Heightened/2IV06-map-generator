@@ -11,6 +11,8 @@ in vec3 normalVector;
 out vec3 color;
 
 void main() {
+	vec3 light = vec3(10,20,5);
+
 	color = fColor;
 
 	// Light emission properties
