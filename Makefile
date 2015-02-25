@@ -13,7 +13,7 @@ LIBS = $(WX_LIBS) -lGL -lGLU -lglew
 
 PROGRAM = $(BINDIR)/generator
 
-OBJ_NAMES = Canvas Window
+OBJ_NAMES = Canvas Window Generator
 OBJECTS = $(addsuffix .o, $(addprefix $(OBJDIR)/, $(OBJ_NAMES)))
 
 OBJ_VENDOR = VoronoiDiagramGenerator
