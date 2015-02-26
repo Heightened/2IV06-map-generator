@@ -20,7 +20,7 @@ std::vector<glm::vec2> Generator::placePoints(PointSelector *psel) {
 	return psel->select(sampleSize);
 };
 
-void Generator::buildGraph(std::vector<glm::vec2> points) {
+Graph * Generator::buildGraph(std::vector<glm::vec2> points) {
 	//Voronoi
 	int numPoints = points.size();
 
@@ -82,12 +82,22 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 	voronoiGen->resetIterator();
 	voronoiGen->resetDelaunayEdgesIterator();
 
+
+	Graph * g = new Graph();
+
 	while(voronoiGen->getNext(v0x, v0y, v1x, v1y) && voronoiGen->getNextDelaunay(d0x, d0y, d1x, d1y)) {
 		//v: (v0x, v0y) -> (v1x, v1y)
 		//d: (d0x, d0y) -> (d1x, d1y)
 
+		glm::vec2 a(v0x, v0y), b(v1x, v1y);
+
+		g->AddEdge(a, b);
+
+		g->AddNode(a);
+		g->AddNode(b);
 	}
 
+	return g;
 	//improveCorners
 };
 
@@ -95,7 +105,7 @@ void Generator::addFeatures() {
 
 };
 
-void Generator::start() {
+Graph * Generator::start() {
 	//Shaping
 	PointSelector *psel = shape();
 
@@ -103,5 +113,5 @@ void Generator::start() {
 	std::vector<glm::vec2> points = placePoints(psel);
 
 	//Building graph
-	buildGraph(points);
+	return buildGraph(points);
 };

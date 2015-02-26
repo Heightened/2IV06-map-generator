@@ -4,6 +4,7 @@
 #include <glm/vec2.hpp>
 
 #include "PointSelector.h"
+#include "GraphVisualisation.h"
 
 namespace Map {
 	class Center;
@@ -83,7 +84,7 @@ class Generator {
 
 	PointSelector *shape();
 	std::vector<glm::vec2> placePoints(PointSelector*);
-	void buildGraph(std::vector<glm::vec2>);
+	Graph * buildGraph(std::vector<glm::vec2>);
 	void addFeatures();
 
 	public:
@@ -94,5 +95,5 @@ class Generator {
 		 */
 		Generator(int mapWidth, int mapHeight, int sampleSize);
 		// Starts the generation process
-		void start();
+		Graph * start();
 };

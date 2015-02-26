@@ -1,4 +1,5 @@
 #include "Canvas.h"
+#include "Generator.h"
 
 #include <wx/dcclient.h>
 
@@ -216,18 +217,9 @@ Canvas::Canvas(wxWindow* parent, wxSize size) : wxGLCanvas(parent, wxID_ANY, NUL
 }
 
 void Canvas::GenerateGeometry() {
-	Graph * g = new Graph();
-	glm::vec2 a(0,0), b(0,3), c(3,0), d(1,1);
-	g->AddEdge(a, b);
-	g->AddEdge(a, d);
-	g->AddEdge(b, c);
-	g->AddEdge(b, d);
-	g->AddEdge(c, a);
-	g->AddEdge(c, d);
-	g->AddNode(a);
-	g->AddNode(b);
-	g->AddNode(c);
-	g->AddNode(d);
+	Generator *gen = new Generator(600, 600, 2000);
+
+	Graph *g = gen->start();
 
 	int edges = g->getEdgeCount();
 	int nodes = g->getNodeCount();

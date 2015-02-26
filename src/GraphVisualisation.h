@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef PREDEFINEDOBJECTS
 	#include "Objects.h"
 #endif
