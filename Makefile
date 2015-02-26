@@ -1,4 +1,4 @@
-CXX = $(shell wx-config --cxx)
+CXX = $(shell wx-config --cxx) -ggdb
 
 OBJDIR = obj
 OBJVENDORDIR = obj/vendor
@@ -13,7 +13,7 @@ LIBS = $(WX_LIBS) -lGL -lGLU -lglew
 
 PROGRAM = $(BINDIR)/generator
 
-OBJ_NAMES = Canvas Window Objects Island HexPointSelector GraphVisualisation Generator
+OBJ_NAMES = Canvas Window Objects Island HexPointSelector RandomPointSelector GraphVisualisation Generator
 OBJECTS = $(addsuffix .o, $(addprefix $(OBJDIR)/, $(OBJ_NAMES)))
 
 OBJ_VENDOR = VoronoiDiagramGenerator
@@ -25,6 +25,9 @@ all: $(PROGRAM)
 
 run: $(PROGRAM)
 	./$(PROGRAM)
+
+debug: $(PROGRAM)
+	gdb $(PROGRAM)
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)

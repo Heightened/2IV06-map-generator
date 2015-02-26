@@ -4,6 +4,7 @@
 #include <cfloat>
 
 #include "HexPointSelector.h"
+#include "RandomPointSelector.h"
 #include "vendor/VoronoiDiagramGenerator.h"
 
 #define GENERATOR_MIN_DISTANCE 1.0e-6
@@ -25,7 +26,7 @@ Generator::Generator(int _width, int _height, int _sampleSize) {
 };
 
 PointSelector *Generator::shape() {
-	return new HexPointSelector(width, height);
+	return new RandomPointSelector(width, height);
 };
 
 std::vector<glm::vec2> Generator::placePoints(PointSelector *psel) {
