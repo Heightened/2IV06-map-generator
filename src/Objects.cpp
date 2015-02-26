@@ -5,6 +5,8 @@
 #include <cmath>
 #include <cstdio>
 
+#include <wx/log.h> 
+
 //Methods to set up buffers to contain for example vertex locations or similar attributes
 
 GLuint generateBuffer(GLenum target, int size, const GLvoid * vectors, GLenum usage) {
@@ -80,6 +82,34 @@ void Attribute::translate(glm::vec3 v) {
 		values[i] += v[0];
 		values[i+1] += v[1];
 		values[i+2] += v[2];
+	}
+}
+
+void Attribute::scale(float scalar) {
+	int n = size();
+	for (int i = 0; i < n; i++) {
+		values[i] *= scalar;
+	}
+}
+
+void Attribute::rotateRad(glm::vec3 axis, float angle) {
+	//convert to degrees
+	angle = (float)(angle / PI) * 180;
+
+	rotate(axis, angle);
+}
+
+void Attribute::rotate(glm::vec3 axis, float angle) {
+	int n = size();
+	
+	for (int i = 0; i < n; i += 3) {
+		glm::vec3 value(values[i], values[i+1], values[i+2]);
+		glm::mat4x4 rotation(1.0f);
+		rotation = glm::rotate(rotation, angle, axis);
+		value = glm::vec3(rotation * glm::vec4(value, 1.0f));
+		values[i] = value.x;
+		values[i+1] = value.y;
+		values[i+2] = value.z;
 	}
 }
 

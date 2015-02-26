@@ -1,5 +1,9 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#define PREDEFINEDOBJECTS 
 
 //Buffer operations
 GLuint generateBuffer(GLenum target, int size, const GLvoid * vectors, GLenum usage);
@@ -57,6 +61,10 @@ public:
 	operator GLfloat * ();
 	//Translations are only applicable on attributes consiting of vec3s
 	void translate(glm::vec3 v);
+	void scale(float scalar);
+	//Rotations are only applicable on attributes consiting of vec3s
+	void rotateRad(glm::vec3 axis, float angle);
+	void rotate(glm::vec3 axis, float angle);
 
 	Attribute(int l, GLfloat * v);
 

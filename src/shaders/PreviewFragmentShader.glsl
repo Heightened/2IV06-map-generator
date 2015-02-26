@@ -34,5 +34,5 @@ void main() {
 	float cosAlpha = clamp( dot( E,R ), 0,1 );
 
 	// Combine to calculate color
-	color = LightPower / (distance*distance) * (MaterialDiffuseColor * cosTheta + MaterialSpecularColor * cosAlpha);
+	color = vec3(0.2f,0.2f,0.2f) + LightPower / (distance*distance) * (MaterialDiffuseColor * cosTheta + MaterialSpecularColor * cosAlpha);
 }

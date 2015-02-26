@@ -2,6 +2,8 @@
 
 #include <wx/dcclient.h>
 
+#include "GraphVisualisation.h"
+
 GLuint initShaders(const char * VertexShaderFile, const char * FragmentShaderFile) {
 	const GLubyte * a = glGetString(GL_SHADING_LANGUAGE_VERSION_ARB);
 	//wxLogError(wxT("%i\n"), a);
@@ -214,7 +216,23 @@ Canvas::Canvas(wxWindow* parent, wxSize size) : wxGLCanvas(parent, wxID_ANY, NUL
 }
 
 void Canvas::GenerateGeometry() {
-	SphereVertices vertices(1.0f, 3); // 0,1,2 or 3 are the only values for subdivisions, higher values will cause exceptions
+	Graph * g = new Graph();
+	glm::vec2 a(0,0), b(0,3), c(3,0), d(1,1);
+	g->AddEdge(a, b);
+	g->AddEdge(a, d);
+	g->AddEdge(b, c);
+	g->AddEdge(b, d);
+	g->AddEdge(c, a);
+	g->AddEdge(c, d);
+	g->AddNode(a);
+	g->AddNode(b);
+	g->AddNode(c);
+	g->AddNode(d);
+
+	int edges = g->getEdgeCount();
+	int nodes = g->getNodeCount();
+	GraphVertices vertices(g, edges, nodes, 3.0f, 0.2f);
+	//SphereVertices vertices(1.0f, 3); // 0,1,2 or 3 are the only values for subdivisions, higher values will cause exceptions
 	//BoxVertices vertices(2.0f, 2.0f, 2.0f);
 	Normals normals(vertices.size()/3, vertices, true);
 	SolidColor color(vertices.size()/3, 0.8f, 0.5f, 0.0f);
@@ -237,8 +255,8 @@ void Canvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	glm::mat4 Matrix(1,0,0,0,
 						0,1,0,0,
 						0,0,1,0,
-						-12,0,0,1);
-	for(int i = 0; i < 7; i++) {
+						0,0,0,1);
+	for(int i = 0; i < 1; i++) {
 		viewer->send(Matrix);
 		object->draw();
 		Matrix = glm::translate(Matrix, glm::vec3(3,0,0));

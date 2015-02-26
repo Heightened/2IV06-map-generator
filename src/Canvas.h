@@ -11,7 +11,9 @@
 #include <vector>
 #include <iostream>
 
-#include "Objects.h"
+#ifndef PREDEFINEDOBJECTS
+	#include "Objects.h"
+#endif
 
 GLuint initShaders(const char * VertexShaderFile, const char * FragmentShaderFile);
 
