@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <set>
+#include <map>
 #include <glm/glm.hpp>
 
 #include "PointSelector.h"
@@ -13,6 +15,10 @@ namespace Map {
 
 	class Center {
 		public:
+			Center(): point(glm::vec2(0, 0)), neighbours(), borders(), corners() {
+				index = -1;
+			}
+
 			Center(int i, glm::vec2 _point): point(_point), neighbours(), borders(), corners() {
 				index = i;
 			}
@@ -39,24 +45,12 @@ namespace Map {
 			std::vector<Corner> corners;
 	};
 
-	class Edge {
+	class Corner {
 		public:
-			Edge(int i, Center _d0, Center _d1, Center _v0, Center _v1, glm::vec2 _midway): d0(_d0), d1(_d1), v0(_v0), v1(_v1), midway(_midway) {
+			Corner(int i, glm::vec2 p): point(p), touches(), protrudes(), adjacent() {
 				index = i;
 			}
 
-			int index;
-
-			Center d0;
-			Center d1;
-			Center v0;
-			Center v1;
-
-			glm::vec2 midway;
-	};
-
-	class Corner {
-		public:
 			int index;
 
 			glm::vec2 point;
@@ -65,9 +59,25 @@ namespace Map {
 			bool coast;
 			bool border;
 
-			std::vector<Center> touches;
-			std::vector<Edge> protrudes;
-			std::vector<Corner> adjacent;
+			std::set<Center> touches;
+			std::set<Edge> protrudes;
+			std::set<Corner> adjacent;
+	};
+
+	class Edge {
+		public:
+			Edge(int i, Center _d0, Center _d1, Corner _v0, Corner _v1, glm::vec2 _midway): d0(_d0), d1(_d1), v0(_v0), v1(_v1), midway(_midway) {
+				index = i;
+			}
+
+			int index;
+
+			Center d0;
+			Center d1;
+			Corner v0;
+			Corner v1;
+
+			glm::vec2 midway;
 	};
 };
 
@@ -86,6 +96,8 @@ class Generator {
 	std::vector<glm::vec2> placePoints(PointSelector*);
 	Graph * buildGraph(std::vector<glm::vec2>);
 	void addFeatures();
+
+	Map::Corner makeCorner(std::map<int, std::vector<Map::Corner> > &cornerMap, std::vector<Map::Corner> &corners, glm::vec2 p);
 
 	public:
 		/**
