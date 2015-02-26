@@ -63,9 +63,12 @@ Graph * Generator::buildGraph(std::vector<glm::vec2> points) {
 	std::vector<Map::Center> centers;
 	std::vector<Map::Center> edges;
 
+	Graph * g = new Graph();
+
 	for(std::vector<glm::vec2>::iterator it = points.begin(); it != points.end(); ++it) {
 		Map::Center c(centers.size(), *it);
 		centers.push_back(c);
+		g->AddNode(*it);
 	}
 
 	//Voronoi Edge
@@ -81,9 +84,6 @@ Graph * Generator::buildGraph(std::vector<glm::vec2> points) {
 
 	voronoiGen->resetIterator();
 	voronoiGen->resetDelaunayEdgesIterator();
-
-
-	Graph * g = new Graph();
 
 	while(voronoiGen->getNext(v0x, v0y, v1x, v1y) && voronoiGen->getNextDelaunay(d0x, d0y, d1x, d1y)) {
 		//v: (v0x, v0y) -> (v1x, v1y)
