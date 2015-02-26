@@ -217,7 +217,7 @@ Canvas::Canvas(wxWindow* parent, wxSize size) : wxGLCanvas(parent, wxID_ANY, NUL
 }
 
 void Canvas::GenerateGeometry() {
-	Generator *gen = new Generator(600, 600, 2000);
+	Generator *gen = new Generator(30, 30, 40);
 
 	Graph *g = gen->start();
 

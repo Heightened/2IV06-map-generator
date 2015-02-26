@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <glm/vec2.hpp>
+#include <glm/glm.hpp>
 
 /**
  * Abstract class used to select points to generate a map

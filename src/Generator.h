@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <glm/vec2.hpp>
+#include <glm/glm.hpp>
 
 #include "PointSelector.h"
 #include "GraphVisualisation.h"

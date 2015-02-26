@@ -63,7 +63,7 @@ public:
 	//UniformMatrices(GLuint shaders, glm::mat4 perspective, glm::mat4 view, glm::mat4 model);
 	UniformMatrices(GLuint shaders,
 					glm::mat4 projection = glm::perspective(60.0f, 2.0f, 0.1f, 1000.0f),
-					glm::vec3 position = glm::vec3(12,12,12), glm::vec3 focus = glm::vec3(0,0,0),
+					glm::vec3 position = glm::vec3(80,80,30), glm::vec3 focus = glm::vec3(60,60,0),
 					glm::mat4 model = glm::mat4(1.0f), 
 					const char * combinedName = "Combined", 
 					const char * viewName = "View", 

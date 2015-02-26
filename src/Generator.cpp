@@ -24,8 +24,8 @@ Graph * Generator::buildGraph(std::vector<glm::vec2> points) {
 	//Voronoi
 	int numPoints = points.size();
 
-	float xValues [numPoints];
-	float yValues [numPoints];
+	float* xValues = new float[numPoints];
+	float* yValues = new float[numPoints];
 
 	float minX = FLT_MAX;
 	float maxX = FLT_MIN;
