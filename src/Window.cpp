@@ -7,7 +7,6 @@
 GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(NULL, wxID_ANY, title, pos, size) {
 	
 	//Initialize Menu
-
     wxMenu* menuFile = new wxMenu;
     menuFile->Append(ID_New, "&New\tCtrl-N", "Reset parameters to generate a new type of map");
 	menuFile->Append(ID_Open, "&Open...\tCtrl-O", "Load previously saved parameters");
@@ -37,7 +36,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 
 	wxLogStream(NULL);
 
-	std::cout << "let's do this";
+	std::cout << "let's do this" << std::endl;
 	mapPreview = new Canvas(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()));
 
 	//Initialize Generation toolbox
@@ -51,8 +50,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 }
 
 void GeneratorFrame::InitializeGL() {
-	glContext = new wxGLContext(mapPreview, NULL);
-	mapPreview->Initialize(glContext);
+	glContext = mapPreview->GetContext();
 }
 
 void GeneratorFrame::OnExit(wxCommandEvent& event) {
@@ -92,7 +90,7 @@ wxIMPLEMENT_APP(GeneratorApp);
 
 bool GeneratorApp::OnInit() {
     GeneratorFrame* frame = new GeneratorFrame("Build-an-Isle", wxPoint(100, 100), wxSize(800, 600));
-    bool init = frame->Show(true);
+	bool init = frame->Show(true);
 	frame->InitializeGL();
 	return init;
 }

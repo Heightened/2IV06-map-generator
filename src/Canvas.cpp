@@ -47,7 +47,7 @@ GLuint initShaders(const char * VertexShaderFile, const char * FragmentShaderFil
 	if ( InfoLogLength > 0 ){
 		std::vector<char> VShaderErrorMessage(InfoLogLength+1);
 		glGetShaderInfoLog(VShader, InfoLogLength, NULL, &VShaderErrorMessage[0]);
-		wxLogError(wxT("%s\n"), &VShaderErrorMessage[0]);
+		wxLogError(wxT("Vertex: %s\n"), &VShaderErrorMessage[0]);
 	}
 
 	// Create fragment Shader
@@ -62,7 +62,7 @@ GLuint initShaders(const char * VertexShaderFile, const char * FragmentShaderFil
 	if ( InfoLogLength > 0 ){
 		std::vector<char> FragmentShaderErrorMessage(InfoLogLength+1);
 		glGetShaderInfoLog(FShader, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-		wxLogError(wxT("%s\n"), &FragmentShaderErrorMessage[0]);
+		wxLogError(wxT("Fragment: %s\n"), &FragmentShaderErrorMessage[0]);
 	}
 
 	// Link the program
@@ -80,7 +80,7 @@ GLuint initShaders(const char * VertexShaderFile, const char * FragmentShaderFil
 	if ( InfoLogLength > 0 ){
 		std::vector<char> ProgramErrorMessage(InfoLogLength+1);
 		glGetProgramInfoLog(Program, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		wxLogError(wxT("%s\n"), &ProgramErrorMessage[0]);
+		wxLogError(wxT("Program: %s\n"), &ProgramErrorMessage[0]);
 	}
 
 	return Program;
@@ -204,7 +204,7 @@ static void CheckGLError() {
 
         errLast = err;
 
-        wxLogError(wxT("OpenGL error %d"), err);
+        wxLogError(wxT("OpenGL error %d: %s"), err, glGetString(err));
     }
 }
 
@@ -212,7 +212,9 @@ wxBEGIN_EVENT_TABLE(Canvas, wxGLCanvas)
 	EVT_PAINT(Canvas::Paint)
 wxEND_EVENT_TABLE()
 
-Canvas::Canvas(wxWindow* parent, wxSize size) : wxGLCanvas(parent, wxID_ANY, NULL, wxDefaultPosition, size, 0, "Preview", wxNullPalette) {
+Canvas::Canvas(wxWindow* parent, wxSize size) : wxGLCanvas(parent, wxID_ANY,  wxDefaultPosition, size, 0, wxT("GLCanvas")) {
+	init = false;
+
 	this->size = size;
 }
 
@@ -233,6 +235,9 @@ void Canvas::GenerateGeometry() {
 }
 
 void Canvas::Paint(wxPaintEvent& WXUNUSED(event)) {
+	if (!init) {
+		Initialize();
+	}
 	wxPaintDC dc(this);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -260,14 +265,15 @@ void Canvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	SwapBuffers();
 }
 
-void Canvas::Initialize(wxGLContext* context) {
+void Canvas::Initialize() {
+	SetCurrent();
 	glewExperimental = true;
-	SetCurrent(*context);
 	bool glew = glewInit();
 	if (glew != GLEW_OK) {
+		printf("\nglewfail\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
@@ -282,4 +288,6 @@ void Canvas::Initialize(wxGLContext* context) {
 	glFlush();
 
 	CheckGLError();
+
+	init = true;
 }

@@ -77,9 +77,10 @@ class Canvas : public wxGLCanvas {
 	UniformMatrices* viewer;
 	ColoredObject* object;
 	wxDECLARE_EVENT_TABLE();
+	bool init;
 public:
 	Canvas(wxWindow* parent, wxSize size);
 	void GenerateGeometry();
 	void Paint(wxPaintEvent& WXUNUSED(event));
-	void Initialize(wxGLContext* context);
+	void Initialize();
 };
