@@ -21,7 +21,7 @@ uniform mat4 View;
 //uniform vec3 light;
 
 void main() {
-	vec3 light = vec3(10,20,5);
+	vec3 light = vec3(60,60,15);
 
 	//Position of the vertex on the screen
 	gl_Position = Combined * vec4(vertex,1);
