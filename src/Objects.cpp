@@ -218,7 +218,6 @@ SphereVertices::SphereVertices(float r, int subdivisions) : Attribute(20 * 3 * 3
 	if (subdivisions > 0) {
 		//Subdivide
 		for (int n = subdivisions; n > 0; n--) {
-			printf("SUBDIVIDE %i \n", n);
 
 			Attribute newvertices(0, 0);
 			for (int i = 0; i < length; i += 9) {
@@ -260,7 +259,6 @@ SphereVertices::SphereVertices(float r, int subdivisions) : Attribute(20 * 3 * 3
 	}
 
 	//Set values
-	printf("Should be %i, but is %i", 20 * 3 * 3 * (int)glm::pow(4.0f, (float)subdivisions), length);
 	values = new GLfloat[length];
 	for (int i = 0; i < length; i++) {
 		values[i] = vertices[i];
