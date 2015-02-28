@@ -14,7 +14,6 @@ void Graph::AddEdge(float x0, float x1, float y0, float y1, float z0, float z1) 
 	edge[0] = x0; edge[1] = x1; edge[2] = y0; edge[3] = y1; edge[4] = z0; edge[5] = z1;
 	edges.push_back(edge);
 	edgeCount++;
-	wxLogError(wxT("edge %i added!"), edgeCount);
 }
 
 void Graph::AddEdge(glm::vec3 a, glm::vec3 b) {
@@ -30,7 +29,6 @@ void Graph::AddNode(float x, float y, float z) {
 	node[0] = x; node[1] = y; node[2] = z;
 	nodes.push_back(node);
 	nodeCount++;
-	wxLogError(wxT("node %i added!"), nodeCount);
 }
 
 void Graph::AddNode(glm::vec3 node) {
@@ -42,7 +40,6 @@ void Graph::AddNode(glm::vec2 node) {
 }
 
 int Graph::getEdgeCount() {
-	wxLogError(wxT("edgeCount: %i"), edgeCount);
 	return edgeCount;
 }
 
@@ -51,7 +48,6 @@ float* Graph::getEdge(int i) {
 }
 
 int Graph::getNodeCount() {
-	wxLogError(wxT("nodeCount: %i"), nodeCount);
 	return nodeCount;
 }
 
