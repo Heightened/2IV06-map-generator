@@ -80,7 +80,6 @@ class Canvas : public wxGLCanvas {
 protected:
 	bool init;
 	wxSize size;
-	Graph *g;
 public:
 	Canvas(wxWindow* parent, wxSize size): wxGLCanvas(parent, wxID_ANY,  wxDefaultPosition, size, 0, wxT("GLCanvas")) {
 		init = false;

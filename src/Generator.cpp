@@ -60,7 +60,7 @@ Map::Corner Generator::makeCorner(std::map<int, std::vector<Map::Corner> > &corn
 	return q;
 };
 
-Graph * Generator::buildGraph(std::vector<glm::vec2> points) {
+void Generator::buildGraph(std::vector<glm::vec2> points) {
 	//Voronoi
 	int numPoints = points.size();
 
@@ -105,12 +105,13 @@ Graph * Generator::buildGraph(std::vector<glm::vec2> points) {
 	std::map<int, std::vector<Map::Corner> > cornerMap;
 	std::vector<Map::Corner> corners;
 
-	Graph * g = new Graph();
-
 	for(std::vector<glm::vec2>::iterator it = points.begin(); it != points.end(); ++it) {
 		Map::Center c(centers.size(), *it);
 		centers.insert(std::pair<glm::vec2, Map::Center>(*it, c));
-		g->AddNode(*it);
+
+		if (polygonGraph) {
+			polygonGraph->AddNode(*it);
+		}
 	}
 
 	//Voronoi Edge
@@ -144,15 +145,16 @@ Graph * Generator::buildGraph(std::vector<glm::vec2> points) {
 
 		edges.push_back(e);
 
-		glm::vec2 a(v0x, v0y), b(v1x, v1y);
+		if (polygonGraph) {
+			glm::vec2 a(v0x, v0y), b(v1x, v1y);
 
-		g->AddEdge(a, b);
+			polygonGraph->AddEdge(a, b);
 
-		g->AddNode(a);
-		g->AddNode(b);
+			polygonGraph->AddNode(a);
+			polygonGraph->AddNode(b);
+		}
 	}
 
-	return g;
 	//improveCorners
 };
 
@@ -160,7 +162,7 @@ void Generator::addFeatures() {
 
 };
 
-Graph * Generator::start() {
+void Generator::start() {
 	//Shaping
 	PointSelector *psel = shape();
 
@@ -168,5 +170,5 @@ Graph * Generator::start() {
 	std::vector<glm::vec2> points = placePoints(psel);
 
 	//Building graph
-	return buildGraph(points);
+	buildGraph(points);
 };

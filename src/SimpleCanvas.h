@@ -17,6 +17,7 @@
 #include "GraphVisualisation.h"
 
 class SimpleCanvas : public Canvas {
+	Graph *g;
 	wxDECLARE_EVENT_TABLE();
 public:
 	SimpleCanvas(wxWindow* parent, wxSize size): Canvas(parent, size){};

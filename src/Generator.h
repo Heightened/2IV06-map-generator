@@ -91,10 +91,12 @@ class Generator {
 	int height;
 	// The number of samples to use to generate the terrain
 	int sampleSize;
+	// A Graph representing the current polygons in the map
+	Graph *polygonGraph;
 
 	PointSelector *shape();
 	std::vector<glm::vec2> placePoints(PointSelector*);
-	Graph * buildGraph(std::vector<glm::vec2>);
+	void buildGraph(std::vector<glm::vec2>);
 	void addFeatures();
 
 	Map::Corner makeCorner(std::map<int, std::vector<Map::Corner> > &cornerMap, std::vector<Map::Corner> &corners, glm::vec2 p);
@@ -107,5 +109,22 @@ class Generator {
 		 */
 		Generator(int mapWidth, int mapHeight, int sampleSize);
 		// Starts the generation process
-		Graph * start();
+		void start();
+
+		/**
+		 * Returns a Graph representing the current polygons in the map
+		 * @return Graph* The current polygons in the map
+		 */
+		Graph *getPolygonGraph() {
+			return polygonGraph;
+		}
+
+		/**
+		 * Sets the Graph representing the current polygons in the map
+		 * @param in Graph* The Graph instance to use
+		 */
+		void setPolygonGraph(Graph *g) {
+			polygonGraph = g;
+		}
+
 };
