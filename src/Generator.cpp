@@ -145,16 +145,41 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 
 		glm::vec2 midway((v0x + v1x) / 2, (v0y + v1y) / 2);
 
-		Map::Edge e(edges.size(),
+		//Edges point to corners, edges point to centers
+		Map::Edge edge(edges.size(),
 			   centers[glm::vec2(d0x, d0y)],
 			   centers[glm::vec2(d1x, d1y)],
 			   makeCorner(cornerMap, corners, glm::vec2(v0x, v0y)),
 			   makeCorner(cornerMap, corners, glm::vec2(v1x, v1y)),
 			   midway);
 
-		//TODO: Connect to neighbours
+		//Centers point to edges, corners point to edges
+		edge.d0.borders.push_back(edge);
+		edge.d1.borders.push_back(edge);
+		edge.v0.protrudes.push_back(edge);
+		edge.v1.protrudes.push_back(edge);
 
-		edges.push_back(e);
+		//Centers point to centers
+		edge.d0.neighbours.insert(edge.d1);
+		edge.d1.neighbours.insert(edge.d0);
+
+		//Corners point to corners
+		edge.v0.adjacent.insert(edge.v1);
+		edge.v1.adjacent.insert(edge.v0);
+
+		//Centers point to corners
+		edge.d0.corners.insert(edge.v0);
+		edge.d0.corners.insert(edge.v1);
+		edge.d1.corners.insert(edge.v0);
+		edge.d1.corners.insert(edge.v1);
+
+		//Corners point to centers
+		edge.v0.touches.insert(edge.d0);
+		edge.v0.touches.insert(edge.d1);
+		edge.v1.touches.insert(edge.d0);
+		edge.v1.touches.insert(edge.d1);
+
+		edges.push_back(edge);
 
 		if (polygonGraph) {
 			glm::vec2 a(v0x, v0y), b(v1x, v1y);

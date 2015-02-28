@@ -32,6 +32,10 @@ namespace Map {
 				border = c.border;
 			}
 
+			inline bool operator< (const Center& other) const{
+				return index < other.index;
+			}
+
 			int index;
 
 			glm::vec2 point;
@@ -40,15 +44,19 @@ namespace Map {
 			bool coast;
 			bool border;
 
-			std::vector<Center> neighbours;
+			std::set<Center> neighbours;
 			std::vector<Edge> borders;
-			std::vector<Corner> corners;
+			std::set<Corner> corners;
 	};
 
 	class Corner {
 		public:
 			Corner(int i, glm::vec2 p): point(p), touches(), protrudes(), adjacent() {
 				index = i;
+			}
+
+			inline bool operator< (const Corner& other) const{
+				return index < other.index;
 			}
 
 			int index;
@@ -60,7 +68,7 @@ namespace Map {
 			bool border;
 
 			std::set<Center> touches;
-			std::set<Edge> protrudes;
+			std::vector<Edge> protrudes;
 			std::set<Corner> adjacent;
 	};
 
