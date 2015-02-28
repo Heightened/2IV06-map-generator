@@ -19,8 +19,11 @@ class GeneratorFrame : public wxFrame {
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
 	void OnGenerate(wxCommandEvent& event);
+	void OnPointRandom(wxCommandEvent& event);
+	void OnPointHex(wxCommandEvent& event);
     wxDECLARE_EVENT_TABLE();
 
+	Generator *gen;
 	Canvas* mapPreview;
 	wxGLContext* glContext;
 
@@ -35,5 +38,7 @@ enum {
 	ID_Open = wxID_HIGHEST + 2,
 	ID_Save = wxID_HIGHEST + 3,
 	ID_Export = wxID_HIGHEST + 4,
-	ID_BtnGenerate = wxID_HIGHEST + 5
+	ID_BtnGenerate = wxID_HIGHEST + 5,
+	ID_RadioPointSelectorRandom = wxID_HIGHEST + 6,
+	ID_RadioPointSelectorHex = wxID_HIGHEST + 7
 };

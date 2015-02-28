@@ -23,10 +23,18 @@ Generator::Generator(int _width, int _height, int _sampleSize) {
 	width = _width;
 	height = _height;
 	sampleSize = _sampleSize;
+
+	pointType = POINTSELECTOR_RANDOM;
 };
 
 PointSelector *Generator::shape() {
-	return new RandomPointSelector(width, height);
+	switch (pointType) {
+	case POINTSELECTOR_HEX:
+		return new HexPointSelector(width, height);
+	case POINTSELECTOR_RANDOM:
+	default:
+		return new RandomPointSelector(width, height);
+	}
 };
 
 std::vector<glm::vec2> Generator::placePoints(PointSelector *psel) {

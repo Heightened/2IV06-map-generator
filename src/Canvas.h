@@ -14,6 +14,7 @@
 #include <iostream>
 
 #include "GraphVisualisation.h"
+#include "Generator.h"
 
 #ifndef PREDEFINEDOBJECTS
 	#include "Objects.h"
@@ -80,11 +81,14 @@ class Canvas : public wxGLCanvas {
 protected:
 	bool init;
 	wxSize size;
+	Generator *gen;
 public:
-	Canvas(wxWindow* parent, wxSize size): wxGLCanvas(parent, wxID_ANY,  wxDefaultPosition, size, 0, wxT("GLCanvas")) {
+	Canvas(wxWindow* parent, wxSize size, Generator *generator): wxGLCanvas(parent, wxID_ANY,  wxDefaultPosition, size, 0, wxT("GLCanvas")) {
 		init = false;
 
 		this->size = size;
+
+		gen = generator;
 	}
 	virtual void GenerateGeometry() = 0;
 	virtual void Paint(wxPaintEvent& WXUNUSED(event)) = 0;
@@ -96,7 +100,7 @@ class ShaderCanvas : public Canvas {
 	ColoredObject* object;
 	wxDECLARE_EVENT_TABLE();
 public:
-	ShaderCanvas(wxWindow* parent, wxSize size): Canvas(parent, size){}
+	ShaderCanvas(wxWindow* parent, wxSize size, Generator *gen): Canvas(parent, size, gen){}
 	virtual void GenerateGeometry();
 	virtual void Paint(wxPaintEvent& WXUNUSED(event));
 	virtual void Initialize();

@@ -213,13 +213,7 @@ wxBEGIN_EVENT_TABLE(ShaderCanvas, wxGLCanvas)
 wxEND_EVENT_TABLE()
 
 void ShaderCanvas::GenerateGeometry() {
-	Graph *g = new Graph();
-	printf("Starting gen\n");
-	Generator *gen = new Generator(600, 600, 2000);
-	gen->setPolygonGraph(g);
-
-	gen->start();
-	printf("Finished gen\n");
+	Graph *g = gen->getPolygonGraph();
 
 	int edges = g->getEdgeCount();
 	int nodes = g->getNodeCount();

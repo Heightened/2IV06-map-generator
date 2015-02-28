@@ -9,13 +9,7 @@ wxBEGIN_EVENT_TABLE(SimpleCanvas, wxGLCanvas)
 wxEND_EVENT_TABLE()
 
 void SimpleCanvas::GenerateGeometry() {
-	g = new Graph();
-	printf("Starting gen\n");
-	Generator *gen = new Generator(600, 600, 2000);
-	gen->setPolygonGraph(g);
-
-	gen->start();
-	printf("Finished gen\n");
+	g = gen->getPolygonGraph();
 }
 
 void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {

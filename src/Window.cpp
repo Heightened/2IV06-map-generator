@@ -43,18 +43,26 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 
 	wxLogStream(NULL);
 
-	std::cout << "let's do this" << std::endl;
-
-	mapPreview = new CANVAS(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()));
+	gen = new Generator(600, 600, 2000);
+	mapPreview = new CANVAS(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()), gen);
 
 	//Initialize Generation toolbox
 
 	wxPanel* toolboxPanel = new wxPanel(this, -1, wxPoint(this->GetClientSize().GetWidth()-120,0), wxSize(120, this->GetClientSize().GetHeight()), 0, "Generation Toolbox");
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	//Point selector
+	sizer->Add(new wxStaticText(toolboxPanel, -1, "Point selector:", wxDefaultPosition, wxDefaultSize));
+	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorRandom, "Random"));
+	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorHex, "Hexagonal"));
+
 	sizer->Add(new wxButton(toolboxPanel, ID_BtnGenerate, "Generate Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "generateButton"), 0, 0, 0);
 	sizer->Add(new wxButton(toolboxPanel, -1, "Export Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "exportButton"), 0, 0, 0);
 	SetSizer(sizer);
+
+	Graph *g = new Graph();
+	gen->setPolygonGraph(g);
+	gen->start();
 }
 
 void GeneratorFrame::InitializeGL() {
@@ -86,8 +94,19 @@ void GeneratorFrame::OnExportMap(wxCommandEvent& event) {
 }
 
 void GeneratorFrame::OnGenerate(wxCommandEvent& event) {
-    mapPreview->GenerateGeometry();
+	Graph *g = new Graph();
+	gen->setPolygonGraph(g);
+    gen->start();
+	mapPreview->GenerateGeometry();
 	mapPreview->Refresh(false);
+}
+
+void GeneratorFrame::OnPointRandom(wxCommandEvent& event) {
+	gen->setPointSelectorType(POINTSELECTOR_RANDOM);
+}
+
+void GeneratorFrame::OnPointHex(wxCommandEvent& event) {
+	gen->setPointSelectorType(POINTSELECTOR_HEX);
 }
 
 wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
@@ -98,6 +117,8 @@ wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
     EVT_MENU(wxID_EXIT,  GeneratorFrame::OnExit)
     EVT_MENU(wxID_ABOUT, GeneratorFrame::OnAbout)
 	EVT_BUTTON(ID_BtnGenerate, GeneratorFrame::OnGenerate)
+	EVT_RADIOBUTTON(ID_RadioPointSelectorRandom, GeneratorFrame::OnPointRandom)
+	EVT_RADIOBUTTON(ID_RadioPointSelectorHex, GeneratorFrame::OnPointHex)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(GeneratorApp);

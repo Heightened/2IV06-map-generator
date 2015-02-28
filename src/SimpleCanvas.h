@@ -20,7 +20,7 @@ class SimpleCanvas : public Canvas {
 	Graph *g;
 	wxDECLARE_EVENT_TABLE();
 public:
-	SimpleCanvas(wxWindow* parent, wxSize size): Canvas(parent, size){};
+	SimpleCanvas(wxWindow* parent, wxSize size, Generator *gen): Canvas(parent, size, gen){};
 	virtual void GenerateGeometry();
 	virtual void Paint(wxPaintEvent& WXUNUSED(event));
 	virtual void Initialize();

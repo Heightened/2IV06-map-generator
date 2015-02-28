@@ -82,6 +82,14 @@ namespace Map {
 };
 
 /**
+ * Point selector type
+ */
+enum PointSelectorType {
+	POINTSELECTOR_RANDOM,
+	POINTSELECTOR_HEX
+};
+
+/**
  * Generates a new Island based on a set of parameters
  */
 class Generator {
@@ -91,6 +99,10 @@ class Generator {
 	int height;
 	// The number of samples to use to generate the terrain
 	int sampleSize;
+
+	// The point selector to use
+	PointSelectorType pointType;
+
 	// A Graph representing the current polygons in the map
 	Graph *polygonGraph;
 
@@ -112,6 +124,14 @@ class Generator {
 		void start();
 
 		/**
+		 * Sets the point selector type to use
+		 * @param in PointSelectorType type The new type
+		 */
+		void setPointSelectorType(PointSelectorType t) {
+			pointType = t;
+		}
+
+		/**
 		 * Returns a Graph representing the current polygons in the map
 		 * @return Graph* The current polygons in the map
 		 */
@@ -121,7 +141,7 @@ class Generator {
 
 		/**
 		 * Sets the Graph representing the current polygons in the map
-		 * @param in Graph* The Graph instance to use
+		 * @param in Graph* g The Graph instance to use
 		 */
 		void setPolygonGraph(Graph *g) {
 			polygonGraph = g;
