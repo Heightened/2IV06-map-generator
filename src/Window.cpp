@@ -4,6 +4,13 @@
 
 #include "Window.h"
 
+#ifdef __WINDOWS__
+#define CANVAS ShaderCanvas
+#else
+#include "SimpleCanvas.h"
+#define CANVAS SimpleCanvas
+#endif
+
 GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(NULL, wxID_ANY, title, pos, size) {
 	
 	//Initialize Menu
@@ -37,7 +44,8 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	wxLogStream(NULL);
 
 	std::cout << "let's do this" << std::endl;
-	mapPreview = new Canvas(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()));
+
+	mapPreview = new CANVAS(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()));
 
 	//Initialize Generation toolbox
 

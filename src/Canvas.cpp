@@ -208,20 +208,16 @@ static void CheckGLError() {
     }
 }
 
-wxBEGIN_EVENT_TABLE(Canvas, wxGLCanvas)
-	EVT_PAINT(Canvas::Paint)
+wxBEGIN_EVENT_TABLE(ShaderCanvas, wxGLCanvas)
+	EVT_PAINT(ShaderCanvas::Paint)
 wxEND_EVENT_TABLE()
 
-Canvas::Canvas(wxWindow* parent, wxSize size) : wxGLCanvas(parent, wxID_ANY,  wxDefaultPosition, size, 0, wxT("GLCanvas")) {
-	init = false;
+void ShaderCanvas::GenerateGeometry() {
+	printf("Starting gen\n");
+	Generator *gen = new Generator(600, 600, 2000);
 
-	this->size = size;
-}
-
-void Canvas::GenerateGeometry() {
-	Generator *gen = new Generator(30, 30, 40);
-
-	Graph *g = gen->start();
+	g = gen->start();
+	printf("Finished gen\n");
 
 	int edges = g->getEdgeCount();
 	int nodes = g->getNodeCount();
@@ -234,7 +230,7 @@ void Canvas::GenerateGeometry() {
 	object = new ColoredObject(vertices.size()/3, &attributes[0]);
 }
 
-void Canvas::Paint(wxPaintEvent& WXUNUSED(event)) {
+void ShaderCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	if (!init) {
 		Initialize();
 	}
@@ -265,7 +261,7 @@ void Canvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	SwapBuffers();
 }
 
-void Canvas::Initialize() {
+void ShaderCanvas::Initialize() {
 	SetCurrent();
 	glewExperimental = true;
 	bool glew = glewInit();

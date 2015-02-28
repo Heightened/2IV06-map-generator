@@ -1,3 +1,5 @@
+#pragma once
+
 #include <GL/glew.h>
 
 #include <wx/glcanvas.h>
@@ -10,6 +12,8 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+
+#include "GraphVisualisation.h"
 
 #ifndef PREDEFINEDOBJECTS
 	#include "Objects.h"
@@ -73,14 +77,28 @@ public:
 //Canvas
 
 class Canvas : public wxGLCanvas {
+protected:
+	bool init;
 	wxSize size;
+	Graph *g;
+public:
+	Canvas(wxWindow* parent, wxSize size): wxGLCanvas(parent, wxID_ANY,  wxDefaultPosition, size, 0, wxT("GLCanvas")) {
+		init = false;
+
+		this->size = size;
+	}
+	virtual void GenerateGeometry() = 0;
+	virtual void Paint(wxPaintEvent& WXUNUSED(event)) = 0;
+	virtual void Initialize() = 0;
+};
+
+class ShaderCanvas : public Canvas {
 	UniformMatrices* viewer;
 	ColoredObject* object;
 	wxDECLARE_EVENT_TABLE();
-	bool init;
 public:
-	Canvas(wxWindow* parent, wxSize size);
-	void GenerateGeometry();
-	void Paint(wxPaintEvent& WXUNUSED(event));
-	void Initialize();
+	ShaderCanvas(wxWindow* parent, wxSize size): Canvas(parent, size){}
+	virtual void GenerateGeometry();
+	virtual void Paint(wxPaintEvent& WXUNUSED(event));
+	virtual void Initialize();
 };
