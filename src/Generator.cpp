@@ -192,9 +192,24 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 	}
 
 	//improveCorners
+	//TODO
 };
 
 void Generator::addFeatures() {
+	assignElevations();
+	assignMoisture();
+	assignBiomes();
+};
+
+void Generator::assignElevations() {
+
+};
+
+void Generator::assignMoisture() {
+
+};
+
+void Generator::assignBiomes() {
 
 };
 

@@ -119,6 +119,9 @@ class Generator {
 	std::vector<glm::vec2> placePoints(PointSelector*);
 	void buildGraph(std::vector<glm::vec2>);
 	void addFeatures();
+	void assignElevations();
+	void assignMoisture();
+	void assignBiomes();
 
 	Map::Corner makeCorner(std::map<int, std::vector<Map::Corner> > &cornerMap, std::vector<Map::Corner> &corners, glm::vec2 p);
 
