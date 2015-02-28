@@ -86,7 +86,8 @@ namespace Map {
  */
 enum PointSelectorType {
 	POINTSELECTOR_RANDOM,
-	POINTSELECTOR_HEX
+	POINTSELECTOR_HEX,
+	POINTSELECTOR_POISSON
 };
 
 /**

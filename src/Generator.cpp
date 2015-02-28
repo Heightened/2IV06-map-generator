@@ -5,6 +5,7 @@
 
 #include "HexPointSelector.h"
 #include "RandomPointSelector.h"
+#include "PoissonPointSelector.h"
 #include "vendor/VoronoiDiagramGenerator.h"
 
 #define GENERATOR_MIN_DISTANCE 1.0e-6
@@ -31,6 +32,8 @@ PointSelector *Generator::shape() {
 	switch (pointType) {
 	case POINTSELECTOR_HEX:
 		return new HexPointSelector(width, height);
+	case POINTSELECTOR_POISSON:
+		return new PoissonPointSelector(width, height);
 	case POINTSELECTOR_RANDOM:
 	default:
 		return new RandomPointSelector(width, height);

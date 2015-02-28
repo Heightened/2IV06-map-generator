@@ -13,10 +13,10 @@ LIBS = $(WX_LIBS) -lGL -lGLU -lglew
 
 PROGRAM = $(BINDIR)/generator
 
-OBJ_NAMES = Canvas SimpleCanvas Window Objects Island HexPointSelector RandomPointSelector GraphVisualisation Generator
+OBJ_NAMES = Canvas SimpleCanvas Window Objects Island HexPointSelector RandomPointSelector PoissonPointSelector GraphVisualisation Generator
 OBJECTS = $(addsuffix .o, $(addprefix $(OBJDIR)/, $(OBJ_NAMES)))
 
-OBJ_VENDOR = VoronoiDiagramGenerator
+OBJ_VENDOR = VoronoiDiagramGenerator PDSampling
 OBJECTSVENDOR = $(addsuffix .o, $(addprefix $(OBJVENDORDIR)/, $(OBJ_VENDOR)))
 
 .SUFFIXES: .o .cpp
