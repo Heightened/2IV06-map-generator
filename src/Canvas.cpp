@@ -221,7 +221,7 @@ void ShaderCanvas::GenerateGeometry() {
 
 	int edges = g->getEdgeCount();
 	int nodes = g->getNodeCount();
-	GraphVertices vertices(g, edges, nodes, 3.0f, 0.2f);
+	GraphVertices vertices(g, edges, nodes, 3.0f, 0.1f);
 	//SphereVertices vertices(1.0f, 3); // 0,1,2 or 3 are the only values for subdivisions, higher values will cause exceptions
 	//BoxVertices vertices(2.0f, 2.0f, 2.0f);
 	Normals normals(vertices.size()/3, vertices, true);
