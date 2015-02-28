@@ -18,6 +18,7 @@ class GeneratorFrame : public wxFrame {
 	void OnExportMap(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+	void OnGenerate(wxCommandEvent& event);
     wxDECLARE_EVENT_TABLE();
 
 	Canvas* mapPreview;
@@ -30,8 +31,9 @@ public:
 };
 
 enum {
-    ID_New = 1,
-	ID_Open = 2,
-	ID_Save = 3,
-	ID_Export = 4
+    ID_New = wxID_HIGHEST + 1,
+	ID_Open = wxID_HIGHEST + 2,
+	ID_Save = wxID_HIGHEST + 3,
+	ID_Export = wxID_HIGHEST + 4,
+	ID_BtnGenerate = wxID_HIGHEST + 5
 };

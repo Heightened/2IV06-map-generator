@@ -52,7 +52,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	wxPanel* toolboxPanel = new wxPanel(this, -1, wxPoint(this->GetClientSize().GetWidth()-120,0), wxSize(120, this->GetClientSize().GetHeight()), 0, "Generation Toolbox");
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(new wxButton(toolboxPanel, -1, "Generate Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "generateButton"), 0, 0, 0);
+	sizer->Add(new wxButton(toolboxPanel, ID_BtnGenerate, "Generate Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "generateButton"), 0, 0, 0);
 	sizer->Add(new wxButton(toolboxPanel, -1, "Export Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "exportButton"), 0, 0, 0);
 	SetSizer(sizer);
 }
@@ -85,6 +85,11 @@ void GeneratorFrame::OnExportMap(wxCommandEvent& event) {
     wxLogMessage("TODO");
 }
 
+void GeneratorFrame::OnGenerate(wxCommandEvent& event) {
+    mapPreview->GenerateGeometry();
+	mapPreview->Refresh(false);
+}
+
 wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
     EVT_MENU(ID_New,   GeneratorFrame::OnNew)
 	EVT_MENU(ID_Open,   GeneratorFrame::OnOpen)
@@ -92,6 +97,7 @@ wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
 	EVT_MENU(ID_Export,   GeneratorFrame::OnExportMap)
     EVT_MENU(wxID_EXIT,  GeneratorFrame::OnExit)
     EVT_MENU(wxID_ABOUT, GeneratorFrame::OnAbout)
+	EVT_BUTTON(ID_BtnGenerate, GeneratorFrame::OnGenerate)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(GeneratorApp);
