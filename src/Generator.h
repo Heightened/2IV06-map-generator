@@ -21,6 +21,11 @@ namespace Map {
 
 			Center(int i, glm::vec2 _point): point(_point), neighbours(), borders(), corners() {
 				index = i;
+
+				water = false;
+				ocean = false;
+				coast = false;
+				border = false;
 			}
 
 			inline bool operator< (const Center& other) const{
@@ -44,6 +49,11 @@ namespace Map {
 		public:
 			Corner(int i, glm::vec2 p): point(p), touches(), protrudes(), adjacent() {
 				index = i;
+
+				water = false;
+				ocean = false;
+				coast = false;
+				border = false;
 			}
 
 			inline bool operator< (const Corner& other) const{
