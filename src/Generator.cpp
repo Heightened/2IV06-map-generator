@@ -217,7 +217,8 @@ void Generator::assignElevationsCorner() {
 
 	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
 		//Island shape
-		(*it)->water = ((*it)->point.x < 150 || (*it)->point.x > 450) && ((*it)->point.y < 150 || (*it)->point.y > 450);
+		(*it)->water = (((*it)->point.x < 150 || (*it)->point.x > 450) && ((*it)->point.y < 150 || (*it)->point.y > 450)) ||
+						(((*it)->point.x > 270 && (*it)->point.x < 330) && ((*it)->point.y > 270 && (*it)->point.y < 330));
 
 		if ((*it)->border) {
 			(*it)->elevation = 0.0f;
