@@ -26,6 +26,8 @@ namespace Map {
 				ocean = false;
 				coast = false;
 				border = false;
+
+				elevation = 0.0f;
 			}
 
 			inline bool operator< (const Center& other) const{
@@ -39,6 +41,8 @@ namespace Map {
 			bool ocean;
 			bool coast;
 			bool border;
+
+			float elevation;
 
 			std::set<Center*> neighbours;
 			std::vector<Edge> borders;
@@ -54,6 +58,8 @@ namespace Map {
 				ocean = false;
 				coast = false;
 				border = false;
+
+				elevation = 0.0f;
 			}
 
 			inline bool operator< (const Corner& other) const{
@@ -67,6 +73,8 @@ namespace Map {
 			bool water;
 			bool coast;
 			bool border;
+
+			float elevation;
 
 			std::set<Center*> touches;
 			std::vector<Edge> protrudes;
@@ -131,6 +139,9 @@ class Generator {
 	void buildGraph(std::vector<glm::vec2>);
 	void addFeatures();
 	void assignElevations();
+	void assignElevationsCorner();
+	void assignElevationsCoastAndLand();
+	void assignElevationsPolygons();
 	void assignMoisture();
 	void assignBiomes();
 

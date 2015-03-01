@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include <cfloat>
+#include <queue>
 
 #include "HexPointSelector.h"
 #include "RandomPointSelector.h"
@@ -9,6 +10,7 @@
 #include "vendor/VoronoiDiagramGenerator.h"
 
 #define GENERATOR_MIN_DISTANCE 1.0e-6
+#define LAKE_THRESHOLD 0.3f
 
 struct vec2comp {
 	bool operator() (const glm::vec2& lhs, const glm::vec2& rhs) const{
@@ -204,8 +206,129 @@ void Generator::addFeatures() {
 };
 
 void Generator::assignElevations() {
-
+	assignElevationsCorner();
+	assignElevationsCoastAndLand();
+	assignElevationsPolygons();
 };
+
+void Generator::assignElevationsCorner() {
+	std::queue<Map::Corner*> queue;
+
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		//Island shape
+		(*it)->water = ((*it)->point.x < 150 || (*it)->point.x > 450) && ((*it)->point.y < 150 || (*it)->point.y > 450);
+
+		if ((*it)->border) {
+			(*it)->elevation = 0.0f;
+			queue.push(*it);
+		} else {
+			(*it)->elevation = FLT_MAX;
+		}
+	}
+
+	Map::Corner *q;
+	while (!queue.empty()) {
+		q = queue.front();
+		queue.pop();
+
+		for (std::set<Map::Corner*>::iterator it = q->adjacent.begin(); it != q->adjacent.end(); it++) {
+			float newElevation = q->elevation + 0.01f;
+
+			if (!(q->water || (*it)->water)) {
+				//TODO: Don't always increase elevation inlands
+				newElevation += 1;
+				//TODO: Extra randomness needed for hex
+			}
+
+			if (newElevation < (*it)->elevation) {
+				(*it)->elevation = newElevation;
+				queue.push(*it);
+			}
+		}
+	}
+}
+
+void Generator::assignElevationsCoastAndLand() {
+	std::queue<Map::Center*> queue;
+
+	// Compute polygon attributes 'ocean' and 'water' based on the
+	// corner attributes. Count the water corners per
+	// polygon. Oceans are all polygons connected to the edge of the
+	// map. In the first pass, mark the edges of the map as ocean;
+	// in the second pass, mark any water-containing polygon
+	// connected an ocean as ocean.
+	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+		int numWater = 0;
+
+		for (std::set<Map::Corner*>::iterator cit = (*it)->corners.begin(); cit != (*it)->corners.end(); cit++) {
+			if ((*cit)->border) {
+				(*it)->border = true;
+				(*it)->ocean = true;
+				(*it)->water = true;
+				queue.push(*it);
+			}
+			if ((*cit)->water) {
+				numWater += 1;
+			}
+		}
+
+		(*it)->water = (*it)->ocean || numWater >= (*it)->corners.size() * LAKE_THRESHOLD;
+	}
+
+	Map::Center *c;
+	while (!queue.empty()) {
+		c = queue.front();
+		queue.pop();
+
+		for (std::set<Map::Center*>::iterator it = c->neighbours.begin(); it != c->neighbours.end(); it++) {
+			if ((*it)->water && !(*it)->ocean) {
+				(*it)->ocean = true;
+				queue.push(*it);
+			}
+		}
+	}
+
+	// Set the polygon attribute 'coast' based on its neighbors. If
+	// it has at least one ocean and at least one land neighbor,
+	// then this is a coastal polygon.
+	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+		int numOcean = 0;
+		int numLand = 0;
+
+		for (std::set<Map::Center*>::iterator nit = (*it)->neighbours.begin(); nit != (*it)->neighbours.end(); nit++) {
+			numOcean += (*nit)->ocean;
+			numLand += !(*nit)->water;
+		}
+
+		(*it)->coast = (numOcean > 0) && (numLand > 0);
+	}
+
+	// Set the corner attributes based on the computed polygon
+	// attributes. If all polygons connected to this corner are
+	// ocean, then it's ocean; if all are land, then it's land;
+	// otherwise it's coast.
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		int numOcean = 0;
+		int numLand = 0;
+		for (std::set<Map::Center*>::iterator cit = (*it)->touches.begin(); cit != (*it)->touches.end(); cit++) {
+			numOcean += (*cit)->ocean;
+			numLand += !(*cit)->water;
+		}
+		(*it)->ocean = (numOcean == (*it)->touches.size());
+		(*it)->coast = (numOcean > 0) && (numLand > 0);
+		(*it)->water = (*it)->border || ((numLand != (*it)->touches.size()) && !(*it)->coast);
+	}
+}
+
+void Generator::assignElevationsPolygons() {
+	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+		float sum = 0.0f;
+		for (std::set<Map::Corner*>::iterator cit = (*it)->corners.begin(); cit != (*it)->corners.end(); cit++) {
+			sum += (*cit)->elevation;
+		}
+		(*it)->elevation = sum/(*it)->corners.size();
+	}
+}
 
 void Generator::assignMoisture() {
 
@@ -224,4 +347,7 @@ void Generator::start() {
 
 	//Building graph
 	buildGraph(points);
+
+	//Add features
+	addFeatures();
 };
