@@ -95,6 +95,7 @@ void GeneratorFrame::OnExportMap(wxCommandEvent& event) {
 }
 
 void GeneratorFrame::OnGenerate(wxCommandEvent& event) {
+	gen->reset();
 	Graph *g = new Graph();
 	gen->setPolygonGraph(g);
     gen->start();

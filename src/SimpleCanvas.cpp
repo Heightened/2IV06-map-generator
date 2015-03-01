@@ -8,8 +8,10 @@ wxBEGIN_EVENT_TABLE(SimpleCanvas, wxGLCanvas)
 	EVT_PAINT(SimpleCanvas::Paint)
 wxEND_EVENT_TABLE()
 
+#define NORMALIZE(point, width, height) (point.x/width)*2 - 1.0f, (point.y/height)*2 - 1.0f
+
 void SimpleCanvas::GenerateGeometry() {
-	g = gen->getPolygonGraph();
+	centers = gen->getCenters();
 }
 
 void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
@@ -24,29 +26,24 @@ void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	GLint ysize = (GLint)GetSize().y;
 	glViewport(0, 0, xsize, ysize);
 
-	int edges = g->getEdgeCount();
-	float *edge = new float[4];
+	float width = gen->getWidth();
+	float height = gen->getHeight();
+
+	glColor3f(0.0, 0.0, 0.0);
 
 	glBegin(GL_LINES);
-		glColor3f(0.0, 0.0, 0.0);
-
-		for (int i = 0; i < edges; i++) {
-			edge = g->getEdge(i);
-
-			glVertex2f((edge[0]/600.0f)*2 - 1.0f, (edge[2]/600.0f)*2 - 1.0f);
-			glVertex2f((edge[1]/600.0f)*2 - 1.0f, (edge[3]/600.0f)*2 - 1.0f);
+	for (std::vector<Map::Center>::iterator it = centers.begin(); it != centers.end(); it++) {
+		for (std::vector<Map::Edge>::iterator eit = it->borders.begin(); eit != it->borders.end(); eit++) {
+			glVertex2f(NORMALIZE(eit->v0.point, width, height));
+			glVertex2f(NORMALIZE(eit->v1.point, width, height));
 		}
+	}
 	glEnd();
-
-
-	int nodes = g->getNodeCount();
-	float *node = new float[2];
 
 	glBegin(GL_POINTS);
 		glPointSize(0.002f);
-		for (int i = 0; i< nodes; i++) {
-			node = g->getNode(i);
-			glVertex2f((node[0]/600.0f)*2 - 1.0f, (node[1]/600.0f)*2 - 1.0f);
+		for (std::vector<Map::Center>::iterator it = centers.begin(); it != centers.end(); it++) {
+			glVertex2f(NORMALIZE(it->point, width, height));
 		}
 	glEnd();
 

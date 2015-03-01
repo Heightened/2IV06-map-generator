@@ -20,7 +20,7 @@ struct vec2comp {
 	}
 };
 
-Generator::Generator(int _width, int _height, int _sampleSize) {
+Generator::Generator(int _width, int _height, int _sampleSize): centers(), edges(), corners() {
 	width = _width;
 	height = _height;
 	sampleSize = _sampleSize;
@@ -111,18 +111,12 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 	voronoiGen->generateVoronoi(xValues, yValues, numPoints, minX, maxX, minY, maxY, 0, true);
 
 	//buildGraph
-	std::map<glm::vec2, Map::Center, vec2comp> centers;
-	std::vector<Map::Edge> edges;
+	std::map<glm::vec2, Map::Center, vec2comp> centerMap;
 	std::map<int, std::vector<Map::Corner> > cornerMap;
-	std::vector<Map::Corner> corners;
 
 	for(std::vector<glm::vec2>::iterator it = points.begin(); it != points.end(); ++it) {
-		Map::Center c(centers.size(), *it);
-		centers.insert(std::pair<glm::vec2, Map::Center>(*it, c));
-
-		if (polygonGraph) {
-			polygonGraph->AddNode(*it);
-		}
+		Map::Center c(centerMap.size(), *it);
+		centerMap.insert(std::pair<glm::vec2, Map::Center>(*it, c));
 	}
 
 	//Voronoi Edge
@@ -147,8 +141,8 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 
 		//Edges point to corners, edges point to centers
 		Map::Edge edge(edges.size(),
-			   centers[glm::vec2(d0x, d0y)],
-			   centers[glm::vec2(d1x, d1y)],
+			   centerMap[glm::vec2(d0x, d0y)],
+			   centerMap[glm::vec2(d1x, d1y)],
 			   makeCorner(cornerMap, corners, glm::vec2(v0x, v0y)),
 			   makeCorner(cornerMap, corners, glm::vec2(v1x, v1y)),
 			   midway);
@@ -180,14 +174,22 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 		edge.v1.touches.insert(edge.d1);
 
 		edges.push_back(edge);
+	}
 
-		if (polygonGraph) {
-			glm::vec2 a(v0x, v0y), b(v1x, v1y);
+	// Dump keys from centerMap
+	for (std::map<glm::vec2, Map::Center, vec2comp>::iterator it = centerMap.begin(); it != centerMap.end(); it++) {
+		centers.push_back(it->second);
+	}
 
-			polygonGraph->AddEdge(a, b);
+	if (polygonGraph) {
+		// Add centers to graph
+		for (std::map<glm::vec2, Map::Center, vec2comp>::iterator it = centerMap.begin(); it != centerMap.end(); it++) {
+			polygonGraph->AddNode(it->second.point);
+		}
 
-			polygonGraph->AddNode(a);
-			polygonGraph->AddNode(b);
+		// Add edges to graph
+		for (std::vector<Map::Edge>::iterator it = edges.begin(); it != edges.end(); it++) {
+			polygonGraph->AddEdge(it->v0.point, it->v1.point);
 		}
 	}
 

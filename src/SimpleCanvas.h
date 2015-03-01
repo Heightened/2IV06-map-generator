@@ -15,9 +15,11 @@
 
 #include "Canvas.h"
 #include "GraphVisualisation.h"
+#include "Generator.h"
+//TODO: Seperate data structure definition from generator
 
 class SimpleCanvas : public Canvas {
-	Graph *g;
+	std::vector<Map::Center> centers;
 	wxDECLARE_EVENT_TABLE();
 public:
 	SimpleCanvas(wxWindow* parent, wxSize size, Generator *gen): Canvas(parent, size, gen){};
