@@ -44,17 +44,17 @@ std::vector<glm::vec2> Generator::placePoints(PointSelector *psel) {
 	return psel->select(sampleSize);
 };
 
-Map::Corner Generator::makeCorner(std::map<int, std::vector<Map::Corner> > &cornerMap, std::vector<Map::Corner> &corners, glm::vec2 p) {
+Map::Corner *Generator::makeCorner(std::map<int, std::vector<Map::Corner*> > &cornerMap, std::vector<Map::Corner*> &corners, glm::vec2 p) {
 	//Check if a corner already exists
 	int bucket;
 	for (bucket = (int)p.x - 1; bucket <= (int)p.x + 1; bucket++) {
 		if (cornerMap.find(bucket) == cornerMap.end()){
-			cornerMap.insert(std::pair<int, std::vector<Map::Corner> > (bucket, std::vector<Map::Corner>()));
+			cornerMap.insert(std::pair<int, std::vector<Map::Corner*> > (bucket, std::vector<Map::Corner*>()));
 		}
 
-		for(std::vector<Map::Corner>::iterator it = cornerMap.find(bucket)->second.begin(); it != cornerMap.find(bucket)->second.end(); ++it) {
-			float dx = p.x - it->point.x;
-			float dy = p.y - it->point.y;
+		for(std::vector<Map::Corner*>::iterator it = cornerMap.find(bucket)->second.begin(); it != cornerMap.find(bucket)->second.end(); ++it) {
+			float dx = p.x - (*it)->point.x;
+			float dy = p.y - (*it)->point.y;
 			if (dx * dx + dy * dy < GENERATOR_MIN_DISTANCE) {
 				return *it;
 			}
@@ -63,8 +63,8 @@ Map::Corner Generator::makeCorner(std::map<int, std::vector<Map::Corner> > &corn
 	bucket = (int)p.x;
 
 	//Create a new corner
-	Map::Corner q(corners.size(), p);
-	q.border = ((int)p.x == 0 || (int)p.x == width || (int)p.y == 0 || (int)p.y == height);
+	Map::Corner *q = new Map::Corner(corners.size(), p);
+	q->border = ((int)p.x == 0 || (int)p.x == width || (int)p.y == 0 || (int)p.y == height);
 	corners.push_back(q);
 	cornerMap.find(bucket)->second.push_back(q);
 
@@ -111,12 +111,12 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 	voronoiGen->generateVoronoi(xValues, yValues, numPoints, minX, maxX, minY, maxY, 0, true);
 
 	//buildGraph
-	std::map<glm::vec2, Map::Center, vec2comp> centerMap;
-	std::map<int, std::vector<Map::Corner> > cornerMap;
+	std::map<glm::vec2, Map::Center*, vec2comp> centerMap;
+	std::map<int, std::vector<Map::Corner*> > cornerMap;
 
 	for(std::vector<glm::vec2>::iterator it = points.begin(); it != points.end(); ++it) {
-		Map::Center c(centerMap.size(), *it);
-		centerMap.insert(std::pair<glm::vec2, Map::Center>(*it, c));
+		Map::Center *c = new Map::Center(centerMap.size(), *it);
+		centerMap.insert(std::pair<glm::vec2, Map::Center*>(*it, c));
 	}
 
 	//Voronoi Edge
@@ -148,48 +148,48 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 			   midway);
 
 		//Centers point to edges, corners point to edges
-		edge.d0.borders.push_back(edge);
-		edge.d1.borders.push_back(edge);
-		edge.v0.protrudes.push_back(edge);
-		edge.v1.protrudes.push_back(edge);
+		edge.d0->borders.push_back(edge);
+		edge.d1->borders.push_back(edge);
+		edge.v0->protrudes.push_back(edge);
+		edge.v1->protrudes.push_back(edge);
 
 		//Centers point to centers
-		edge.d0.neighbours.insert(edge.d1);
-		edge.d1.neighbours.insert(edge.d0);
+		edge.d0->neighbours.insert(edge.d1);
+		edge.d1->neighbours.insert(edge.d0);
 
 		//Corners point to corners
-		edge.v0.adjacent.insert(edge.v1);
-		edge.v1.adjacent.insert(edge.v0);
+		edge.v0->adjacent.insert(edge.v1);
+		edge.v1->adjacent.insert(edge.v0);
 
 		//Centers point to corners
-		edge.d0.corners.insert(edge.v0);
-		edge.d0.corners.insert(edge.v1);
-		edge.d1.corners.insert(edge.v0);
-		edge.d1.corners.insert(edge.v1);
+		edge.d0->corners.insert(edge.v0);
+		edge.d0->corners.insert(edge.v1);
+		edge.d1->corners.insert(edge.v0);
+		edge.d1->corners.insert(edge.v1);
 
 		//Corners point to centers
-		edge.v0.touches.insert(edge.d0);
-		edge.v0.touches.insert(edge.d1);
-		edge.v1.touches.insert(edge.d0);
-		edge.v1.touches.insert(edge.d1);
+		edge.v0->touches.insert(edge.d0);
+		edge.v0->touches.insert(edge.d1);
+		edge.v1->touches.insert(edge.d0);
+		edge.v1->touches.insert(edge.d1);
 
 		edges.push_back(edge);
 	}
 
 	// Dump keys from centerMap
-	for (std::map<glm::vec2, Map::Center, vec2comp>::iterator it = centerMap.begin(); it != centerMap.end(); it++) {
+	for (std::map<glm::vec2, Map::Center*, vec2comp>::iterator it = centerMap.begin(); it != centerMap.end(); it++) {
 		centers.push_back(it->second);
 	}
 
 	if (polygonGraph) {
 		// Add centers to graph
-		for (std::map<glm::vec2, Map::Center, vec2comp>::iterator it = centerMap.begin(); it != centerMap.end(); it++) {
-			polygonGraph->AddNode(it->second.point);
+		for (std::map<glm::vec2, Map::Center*, vec2comp>::iterator it = centerMap.begin(); it != centerMap.end(); it++) {
+			polygonGraph->AddNode(it->second->point);
 		}
 
 		// Add edges to graph
 		for (std::vector<Map::Edge>::iterator it = edges.begin(); it != edges.end(); it++) {
-			polygonGraph->AddEdge(it->v0.point, it->v1.point);
+			polygonGraph->AddEdge(it->v0->point, it->v1->point);
 		}
 	}
 

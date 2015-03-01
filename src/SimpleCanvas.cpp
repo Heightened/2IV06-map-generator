@@ -32,18 +32,18 @@ void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	glColor3f(0.0, 0.0, 0.0);
 
 	glBegin(GL_LINES);
-	for (std::vector<Map::Center>::iterator it = centers.begin(); it != centers.end(); it++) {
-		for (std::vector<Map::Edge>::iterator eit = it->borders.begin(); eit != it->borders.end(); eit++) {
-			glVertex2f(NORMALIZE(eit->v0.point, width, height));
-			glVertex2f(NORMALIZE(eit->v1.point, width, height));
+	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+		for (std::vector<Map::Edge>::iterator eit = (*it)->borders.begin(); eit != (*it)->borders.end(); eit++) {
+			glVertex2f(NORMALIZE(eit->v0->point, width, height));
+			glVertex2f(NORMALIZE(eit->v1->point, width, height));
 		}
 	}
 	glEnd();
 
 	glBegin(GL_POINTS);
 		glPointSize(0.002f);
-		for (std::vector<Map::Center>::iterator it = centers.begin(); it != centers.end(); it++) {
-			glVertex2f(NORMALIZE(it->point, width, height));
+		for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+			glVertex2f(NORMALIZE((*it)->point, width, height));
 		}
 	glEnd();
 

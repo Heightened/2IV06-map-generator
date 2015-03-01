@@ -19,7 +19,7 @@
 //TODO: Seperate data structure definition from generator
 
 class SimpleCanvas : public Canvas {
-	std::vector<Map::Center> centers;
+	std::vector<Map::Center*> centers;
 	wxDECLARE_EVENT_TABLE();
 public:
 	SimpleCanvas(wxWindow* parent, wxSize size, Generator *gen): Canvas(parent, size, gen){};
