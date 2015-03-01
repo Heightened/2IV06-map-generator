@@ -70,6 +70,9 @@ void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
 		glColor3f(179/255.0f, 166/255.0f, 146/255.0f);
 		if ((*it)->water) {
+			glColor3f(91/255.0f, 132/255.0f, 173/255.0f);
+		}
+		if ((*it)->ocean) {
 			glColor3f(54/255.0f, 54/255.0f, 97/255.0f);
 		}
 		if ((*it)->border) {
