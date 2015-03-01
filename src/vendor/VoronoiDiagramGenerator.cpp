@@ -424,7 +424,6 @@ struct Edge * VoronoiDiagramGenerator::bisect(struct Site *s1,struct Site *s2)
 	newedge -> edgenbr = nedges;
 
 	//printf("\nbisect(%d) ((%f,%f) and (%f,%f)",nedges,s1->coord.x,s1->coord.y,s2->coord.x,s2->coord.y);
-	out_bisector(newedge);
 	nedges += 1;
 	return(newedge);
 }
@@ -1072,6 +1071,7 @@ void VoronoiDiagramGenerator::clip_line(struct Edge *e)
 	if(!((x1 == x2 && x2== pxmin) || (x1 == x2 && x2 == pxmax) ||
 		(y1 == y2 && y2 == pymin) || (y1 == y2 && y2 == pymax)))
 	{
+		out_bisector(e);
 		pushGraphEdge(x1,y1,x2,y2);
 		if(needNewVertex1)
 		{
