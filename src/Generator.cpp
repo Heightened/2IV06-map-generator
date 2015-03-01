@@ -66,7 +66,8 @@ Map::Corner *Generator::makeCorner(std::map<int, std::vector<Map::Corner*> > &co
 
 	//Create a new corner
 	Map::Corner *q = new Map::Corner(corners.size(), p);
-	q->border = ((int)p.x == 0 || (int)p.x == width || (int)p.y == 0 || (int)p.y == height);
+	//You're a border if you're within 2% of the map sizes
+	q->border = (p.x < width * 0.02 || p.x > width - (width * 0.02) || p.y < height * 0.02 || p.y > height - (height * 0.02));
 	corners.push_back(q);
 	cornerMap.find(bucket)->second.push_back(q);
 
