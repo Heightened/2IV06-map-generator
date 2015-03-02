@@ -90,9 +90,6 @@ void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 		if ((*it)->ocean) {
 			glColor4f(54/255.0f, 54/255.0f, 97/255.0f, alpha);
 		}
-		if ((*it)->border) {
-			glColor4f(1.0, 0.0, 0.0, alpha);
-		}
 		std::vector<glm::vec2> cornerPoints;
 		for (std::set<Map::Corner*>::iterator eit = (*it)->corners.begin(); eit != (*it)->corners.end(); eit++) {
 			cornerPoints.push_back((*eit)->point);
