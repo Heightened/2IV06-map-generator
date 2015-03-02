@@ -210,6 +210,7 @@ static void CheckGLError() {
 
 wxBEGIN_EVENT_TABLE(ShaderCanvas, wxGLCanvas)
 	EVT_PAINT(ShaderCanvas::Paint)
+	EVT_KEY_DOWN(ShaderCanvas::OnKeyDown)
 wxEND_EVENT_TABLE()
 
 void ShaderCanvas::GenerateGeometry() {
@@ -283,4 +284,56 @@ void ShaderCanvas::Initialize(wxGLContext* context) {
 	CheckGLError();
 
 	init = true;
+}
+
+void ShaderCanvas::Zoom(float strength) {
+	glm::vec3 pos = viewer->getPosition();
+	glm::vec3 focus = viewer->getFocus();
+	//We can assume that position and focus are not identical or the view would malfunction alltogether
+	glm::vec3 dir = glm::normalize(focus - pos);
+	glm::vec3 trans = strength * dir;
+
+	glm::bvec3 compare = glm::equal(pos+trans, focus);
+	if (!(compare.x && compare.y && compare.z)) {
+		viewer->setPosition(pos + trans);
+		this->Refresh(false);
+	}
+}
+
+void ShaderCanvas::CircleFocus(float angle) {
+	glm::vec3 pos = viewer->getPosition();
+	glm::vec3 focus = viewer->getFocus();
+	glm::vec3 dir = focus - pos;
+	glm::vec3 invdir(-dir.x, -dir.y, -dir.z);
+
+	glm::mat4x4 rotation(1.0f);
+	rotation = glm::rotate(rotation, angle, glm::vec3(0,0,1));
+
+	viewer->setPosition(focus + glm::vec3(rotation * glm::vec4(invdir, 1.0f)));
+	this->Refresh(false);
+}
+
+void ShaderCanvas::OnKeyDown(wxKeyEvent& event) {
+    wxChar unicode = event.GetUnicodeKey();
+    if (unicode != WXK_NONE) {
+		switch (unicode) {
+		default:
+			break;
+		}
+    } else {
+        switch (event.GetKeyCode()) {
+		case WXK_UP:
+			Zoom(1.0f);
+			break;
+		case WXK_DOWN:
+			Zoom(-1.0f);
+            break;
+        case WXK_LEFT:
+			CircleFocus(-1.0f);
+			break;
+        case WXK_RIGHT:
+			CircleFocus(1.0f);
+            break;
+        }
+    }
 }

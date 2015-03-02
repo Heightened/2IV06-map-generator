@@ -102,6 +102,10 @@ class ShaderCanvas : public Canvas {
 	UniformMatrices* viewer;
 	ColoredObject* object;
 	wxDECLARE_EVENT_TABLE();
+
+	void Zoom(float strength);
+	void CircleFocus(float left);
+	void OnKeyDown(wxKeyEvent& event);
 public:
 	ShaderCanvas(wxWindow* parent, wxSize size, Generator *gen): Canvas(parent, size, gen){}
 	virtual void GenerateGeometry();
