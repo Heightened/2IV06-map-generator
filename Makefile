@@ -1,4 +1,4 @@
-CXX = $(shell wx-config --cxx) -ggdb
+CXX = $(shell wx-config --cxx) -ggdb -fdiagnostics-color=auto -Wfatal-errors
 
 OBJDIR = obj
 OBJVENDORDIR = obj/vendor
@@ -13,7 +13,7 @@ LIBS = $(WX_LIBS) -lGL -lGLU -lglew
 
 PROGRAM = $(BINDIR)/generator
 
-OBJ_NAMES = Canvas SimpleCanvas Window Objects Island HexPointSelector RandomPointSelector PoissonPointSelector GraphVisualisation Generator
+OBJ_NAMES = Canvas SimpleCanvas Window Objects Island HexPointSelector RandomPointSelector PoissonPointSelector RadialMapShaper SquareMapShaper GraphVisualisation Generator
 OBJECTS = $(addsuffix .o, $(addprefix $(OBJDIR)/, $(OBJ_NAMES)))
 
 OBJ_VENDOR = VoronoiDiagramGenerator PDSampling
@@ -27,7 +27,7 @@ run: $(PROGRAM)
 	./$(PROGRAM)
 
 debug: $(PROGRAM)
-	gdb $(PROGRAM)
+	gdb -ex run $(PROGRAM)
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
