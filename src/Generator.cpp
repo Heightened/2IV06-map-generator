@@ -217,7 +217,7 @@ void Generator::addFeatures() {
 void Generator::assignElevations() {
 	assignElevationsCorner();
 	assignElevationsCoastAndLand();
-	assignElevationsRedistribute();
+	//assignElevationsRedistribute();
 	assignElevationsPolygons();
 
 	if (heightGraph) {
