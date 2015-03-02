@@ -65,18 +65,33 @@ void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	float width = gen->getWidth();
 	float height = gen->getHeight();
 
-	glColor3f(0.0, 0.0, 0.0);
+	float minElevation = FLT_MAX;
+	float maxElevation = FLT_MIN;
 
 	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
-		glColor3f(179/255.0f, 166/255.0f, 146/255.0f);
+		if ((*it)->elevation < minElevation) {
+			minElevation = (*it)->elevation;
+		}
+		if ((*it)->elevation > maxElevation) {
+			maxElevation = (*it)->elevation;
+		}
+	}
+
+	glColor3f(0.0, 0.0, 0.0);
+
+	float alpha;
+	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+		alpha = 1.0f - ((*it)->elevation - minElevation)/(maxElevation-minElevation)*0.7f;
+
+		glColor4f(179/255.0f, 166/255.0f, 146/255.0f, alpha);
 		if ((*it)->water) {
-			glColor3f(91/255.0f, 132/255.0f, 173/255.0f);
+			glColor4f(91/255.0f, 132/255.0f, 173/255.0f, alpha);
 		}
 		if ((*it)->ocean) {
-			glColor3f(54/255.0f, 54/255.0f, 97/255.0f);
+			glColor4f(54/255.0f, 54/255.0f, 97/255.0f, alpha);
 		}
 		if ((*it)->border) {
-			glColor3f(1.0, 0.0, 0.0);
+			glColor4f(1.0, 0.0, 0.0, alpha);
 		}
 		std::vector<glm::vec2> cornerPoints;
 		for (std::set<Map::Corner*>::iterator eit = (*it)->corners.begin(); eit != (*it)->corners.end(); eit++) {
@@ -124,6 +139,8 @@ void SimpleCanvas::Initialize() {
 	glEnable(GL_CULL_FACE);
 	glClearColor(0,0,0,1.0f);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	GenerateGeometry();
 
