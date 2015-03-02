@@ -8,6 +8,8 @@
 #include "HexPointSelector.h"
 #include "RandomPointSelector.h"
 #include "PoissonPointSelector.h"
+#include "SquareMapShaper.h"
+#include "RadialMapShaper.h"
 #include "vendor/VoronoiDiagramGenerator.h"
 
 #define GENERATOR_MIN_DISTANCE 1.0e-6
@@ -38,7 +40,7 @@ Generator::Generator(int _width, int _height, int _sampleSize): centers(), edges
 	pointType = POINTSELECTOR_RANDOM;
 };
 
-PointSelector *Generator::shape() {
+PointSelector *Generator::select() {
 	switch (pointType) {
 	case POINTSELECTOR_HEX:
 		return new HexPointSelector(width, height);
@@ -48,6 +50,10 @@ PointSelector *Generator::shape() {
 	default:
 		return new RandomPointSelector(width, height);
 	}
+};
+
+MapShaper *Generator::shape() {
+	return new RadialMapShaper();
 };
 
 std::vector<glm::vec2> Generator::placePoints(PointSelector *psel) {
@@ -208,14 +214,14 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 	//TODO
 };
 
-void Generator::addFeatures() {
-	assignElevations();
+void Generator::addFeatures(MapShaper* mshape) {
+	assignElevations(mshape);
 	assignMoisture();
 	assignBiomes();
 };
 
-void Generator::assignElevations() {
-	assignElevationsCorner();
+void Generator::assignElevations(MapShaper* mshape) {
+	assignElevationsCorner(mshape);
 	assignElevationsCoastAndLand();
 	//assignElevationsRedistribute();
 	assignElevationsPolygons();
@@ -233,13 +239,18 @@ void Generator::assignElevations() {
 	}
 };
 
-void Generator::assignElevationsCorner() {
+void Generator::assignElevationsCorner(MapShaper* mshape) {
 	std::queue<Map::Corner*> queue;
 
 	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
 		//Island shape
-		(*it)->water = (((*it)->point.x < 150 || (*it)->point.x > 450) && ((*it)->point.y < 150 || (*it)->point.y > 450)) ||
-						(((*it)->point.x > 270 && (*it)->point.x < 330) && ((*it)->point.y > 270 && (*it)->point.y < 330));
+
+		//Transform point to (-1, +1) range
+		glm::vec2 p((*it)->point);
+		p.x = (p.x/width)*2.0f - 1.0f;
+		p.y = (p.y/height)*2.0f - 1.0f;
+
+		(*it)->water = !mshape->isLand(p);
 
 		if ((*it)->border) {
 			(*it)->elevation = 0.0f;
@@ -397,7 +408,8 @@ void Generator::assignBiomes() {
 
 void Generator::start() {
 	//Shaping
-	PointSelector *psel = shape();
+	MapShaper *mshape = shape();
+	PointSelector *psel = select();
 
 	//Placing points
 	std::vector<glm::vec2> points = placePoints(psel);
@@ -406,5 +418,5 @@ void Generator::start() {
 	buildGraph(points);
 
 	//Add features
-	addFeatures();
+	addFeatures(mshape);
 };
