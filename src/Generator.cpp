@@ -210,6 +210,18 @@ void Generator::assignElevations() {
 	assignElevationsCorner();
 	assignElevationsCoastAndLand();
 	assignElevationsPolygons();
+
+	if (heightGraph) {
+		// Add centers to graph
+		for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+			heightGraph->AddNode(glm::vec3((*it)->point.x, (*it)->point.y, (*it)->elevation));
+		}
+
+		// Add edges to graph
+		for (std::vector<Map::Edge>::iterator it = edges.begin(); it != edges.end(); it++) {
+			heightGraph->AddEdge(glm::vec3(it->v0->point.x, it->v0->point.y, it->v0->elevation), glm::vec3(it->v1->point.x, it->v1->point.y, it->v1->elevation));
+		}
+	}
 };
 
 void Generator::assignElevationsCorner() {

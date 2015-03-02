@@ -65,6 +65,8 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 
 	Graph *g = new Graph();
 	gen->setPolygonGraph(g);
+	Graph *hg = new Graph();
+	gen->setHeightGraph(hg);
 	gen->start();
 }
 
@@ -101,6 +103,8 @@ void GeneratorFrame::OnGenerate(wxCommandEvent& event) {
 	gen->reset();
 	Graph *g = new Graph();
 	gen->setPolygonGraph(g);
+	Graph *hg = new Graph();
+	gen->setHeightGraph(hg);
     gen->start();
 	mapPreview->GenerateGeometry();
 	mapPreview->Refresh(false);

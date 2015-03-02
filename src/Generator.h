@@ -128,6 +128,8 @@ class Generator {
 
 	// A Graph representing the current polygons in the map
 	Graph *polygonGraph;
+	// A Graph representing the current polygons in the map, with height
+	Graph *heightGraph;
 
 	// Data structures representing the map
 	std::vector<Map::Center*> centers;
@@ -187,6 +189,22 @@ class Generator {
 		 */
 		void setPolygonGraph(Graph *g) {
 			polygonGraph = g;
+		}
+
+		/**
+		 * Returns a Graph representing the current polygons with height in the map
+		 * @return Graph* The current polygons in the map with height
+		 */
+		Graph *getHeightGraph() {
+			return heightGraph;
+		}
+
+		/**
+		 * Sets the Graph representing the current polygons with height in the map
+		 * @param in Graph* g The Graph instance to use
+		 */
+		void setHeightGraph(Graph *g) {
+			heightGraph = g;
 		}
 
 		std::vector<Map::Center*> getCenters() {
