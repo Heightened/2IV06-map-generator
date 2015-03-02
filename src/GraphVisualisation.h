@@ -22,6 +22,9 @@ public:
 	void AddNode(glm::vec3 node);
 	void AddNode(glm::vec2 node);
 
+	void RemoveEdge(int i);
+	void RemoveNode(int i);
+
 	//returns the number of edges that were added
 	int getEdgeCount();
 	//returns the 6 coordinates corresponding to the x0, x1, y0, y1, z0, z1 with which edge i was constructed
@@ -32,6 +35,9 @@ public:
 	//returns the 3 coordinates corresponding to the x, y and optional z with which node i was constructed
 	float* getNode(int i);
 };
+
+//Divides graph into smaller sections to be visualized as multiple GraphVertices
+std::vector<Graph*> DivideGraph(Graph* g);
 
 class GraphVertices : public Attribute {
 public:

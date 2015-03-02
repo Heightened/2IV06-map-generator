@@ -8,8 +8,8 @@
 #define PREDEFINEDOBJECTS 
 
 //Buffer operations
-GLuint generateBuffer(GLenum target, int size, const GLvoid * vectors, GLenum usage);
-void loadBuffer(GLuint buffer, GLuint attribute, int vectorsize, GLenum type, bool normalize);
+GLuint generateBuffer(GLenum target, size_t size, const GLvoid * vectors, GLenum usage);
+void loadBuffer(GLuint buffer, GLuint attribute, size_t vectorsize, GLenum type, bool normalize);
 
 //Object classes
 class Object {
@@ -17,14 +17,15 @@ class Object {
 	const GLfloat * normals;
 
 protected:
-	const int vertexCount;
+	const size_t vertexCount;
 	GLuint verticesId;
 	GLuint normalsId;
 
 public:
 	virtual void draw() {};
 	
-	Object(int vertexCount, const GLfloat ** attributes);
+	Object(size_t vertexCount, const GLfloat ** attributes);
+	~Object();
 };
 
 class ColoredObject : public Object {
@@ -36,7 +37,8 @@ protected:
 public:
 	virtual void draw();
 
-	ColoredObject(int vertexCount, const GLfloat ** attributes);
+	ColoredObject(size_t vertexCount, const GLfloat ** attributes);
+	~ColoredObject();
 };
 
 class TexturedObject : public Object {
@@ -48,18 +50,19 @@ protected:
 public:
 	virtual void draw();
 
-	TexturedObject(int vertexCount, const GLfloat ** attributes);
+	TexturedObject(size_t vertexCount, const GLfloat ** attributes);
+	~TexturedObject();
 };
 
 class Attribute {
 protected:
-	int length;
+	size_t length;
 	GLfloat * values;
 
 	//Constructor that allows an empty Attribute object to be constructed by child classes
-	Attribute(int l);
+	Attribute(size_t l);
 public:
-	int size();
+	size_t size();
 	operator GLfloat * ();
 	//Translations are only applicable on attributes consiting of vec3s
 	void translate(glm::vec3 v);
@@ -68,7 +71,7 @@ public:
 	void rotateRad(glm::vec3 axis, float angle);
 	void rotate(glm::vec3 axis, float angle);
 
-	Attribute(int l, GLfloat * v);
+	Attribute(size_t l, GLfloat * v);
 
 	friend Attribute operator+ (const Attribute &first, const Attribute &second);
 };
@@ -90,10 +93,10 @@ public:
 
 class Normals : public Attribute {
 public:
-	Normals(int vertexCount, GLfloat * vertices, bool smooth);
+	Normals(size_t vertexCount, GLfloat * vertices, bool smooth);
 };
 
 class SolidColor : public Attribute {
 public:
-	SolidColor(int vertexCount, float r, float g, float b);
+	SolidColor(size_t vertexCount, float r, float g, float b);
 };

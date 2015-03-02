@@ -9,7 +9,7 @@
 
 //Methods to set up buffers to contain for example vertex locations or similar attributes
 
-GLuint generateBuffer(GLenum target, int size, const GLvoid * vectors, GLenum usage) {
+GLuint generateBuffer(GLenum target, size_t size, const GLvoid * vectors, GLenum usage) {
 	GLuint id = -1;
 	glGenBuffers(1, &id);
 	glBindBuffer(target, id);
@@ -17,7 +17,7 @@ GLuint generateBuffer(GLenum target, int size, const GLvoid * vectors, GLenum us
 	return id;
 }
 
-void loadBuffer(GLuint buffer, GLuint attribute, int vectorsize, GLenum type, bool normalize) {
+void loadBuffer(GLuint buffer, GLuint attribute, size_t vectorsize, GLenum type, bool normalize) {
 	glEnableVertexAttribArray(attribute);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glVertexAttribPointer(attribute, vectorsize, type, normalize, 0, 0); 
@@ -25,9 +25,17 @@ void loadBuffer(GLuint buffer, GLuint attribute, int vectorsize, GLenum type, bo
 
 //Objects using buffers
 
-Object::Object(int _vertexCount, const GLfloat ** attributes) : vertexCount(_vertexCount), vertices(attributes[0]), normals(attributes[1]) {
+Object::Object(size_t _vertexCount, const GLfloat ** attributes) : vertexCount(_vertexCount), vertices(attributes[0]), normals(attributes[1]) {
 	verticesId = generateBuffer(GL_ARRAY_BUFFER, vertexCount*3*4, vertices, GL_STATIC_DRAW);
 	normalsId = generateBuffer(GL_ARRAY_BUFFER, vertexCount*3*4, normals, GL_STATIC_DRAW);
+}
+
+Object::~Object() {
+	delete[] vertices;
+	delete[] normals;
+
+	const GLuint buffers[] = {verticesId, normalsId};
+	glDeleteBuffers(2, buffers);
 }
 
 void ColoredObject::draw() {
@@ -42,9 +50,16 @@ void ColoredObject::draw() {
 	glDisableVertexAttribArray(2);
 }
 
-ColoredObject::ColoredObject(int _vertexCount, const GLfloat ** attributes) : Object(_vertexCount, attributes), colors(attributes[2]) {
+ColoredObject::ColoredObject(size_t _vertexCount, const GLfloat ** attributes) : Object(_vertexCount, attributes), colors(attributes[2]) {
 	colorsId = generateBuffer(GL_ARRAY_BUFFER, vertexCount*3*4, colors, GL_STATIC_DRAW);
 	printf("\nvertexCount: %i\n", vertexCount);
+}
+
+ColoredObject::~ColoredObject() {
+	delete[] colors;
+
+	const GLuint buffers[] = {colorsId};
+	glDeleteBuffers(1, buffers);
 }
 
 void TexturedObject::draw() {
@@ -59,16 +74,23 @@ void TexturedObject::draw() {
 	glDisableVertexAttribArray(3);
 }
 
-TexturedObject::TexturedObject(int _vertexCount, const GLfloat ** attributes) : Object(_vertexCount, attributes), uvcoords(attributes[2]) {
+TexturedObject::TexturedObject(size_t _vertexCount, const GLfloat ** attributes) : Object(_vertexCount, attributes), uvcoords(attributes[2]) {
 	uvcoordsId = generateBuffer(GL_ARRAY_BUFFER, vertexCount*3*4, uvcoords, GL_STATIC_DRAW);
+}
+
+TexturedObject::~TexturedObject() {
+	delete[] uvcoords;
+
+	const GLuint buffers[] = {uvcoordsId};
+	glDeleteBuffers(1, buffers);
 }
 
 //Attribute class
 
-Attribute::Attribute(int l) : length(l), values(new GLfloat[l]) {
+Attribute::Attribute(size_t l) : length(l), values(new GLfloat[l]) {
 }
 
-int Attribute::size() {
+size_t Attribute::size() {
 	return length;
 }
 
@@ -77,8 +99,8 @@ Attribute::operator GLfloat * () {
 }
 
 void Attribute::translate(glm::vec3 v) {
-	int n = size();
-	for (int i = 0; i < n; i += 3) {
+	size_t n = size();
+	for (size_t i = 0; i < n; i += 3) {
 		values[i] += v[0];
 		values[i+1] += v[1];
 		values[i+2] += v[2];
@@ -86,8 +108,8 @@ void Attribute::translate(glm::vec3 v) {
 }
 
 void Attribute::scale(float scalar) {
-	int n = size();
-	for (int i = 0; i < n; i++) {
+	size_t n = size();
+	for (size_t i = 0; i < n; i++) {
 		values[i] *= scalar;
 	}
 }
@@ -100,9 +122,9 @@ void Attribute::rotateRad(glm::vec3 axis, float angle) {
 }
 
 void Attribute::rotate(glm::vec3 axis, float angle) {
-	int n = size();
+	size_t n = size();
 	
-	for (int i = 0; i < n; i += 3) {
+	for (size_t i = 0; i < n; i += 3) {
 		glm::vec3 value(values[i], values[i+1], values[i+2]);
 		glm::mat4x4 rotation(1.0f);
 		rotation = glm::rotate(rotation, angle, axis);
@@ -113,19 +135,19 @@ void Attribute::rotate(glm::vec3 axis, float angle) {
 	}
 }
 
-Attribute::Attribute(int l, GLfloat * v) : length(l), values(new GLfloat[l]) {
+Attribute::Attribute(size_t l, GLfloat * v) : length(l), values(new GLfloat[l]) {
 	for (int i = 0; i < l; i++) {
 		values[i] = v[i];
 	}
 }
 
 Attribute operator+ (const Attribute &first, const Attribute &second) {
-	int n = first.length + second.length;
+	size_t n = first.length + second.length;
 	GLfloat * result = new GLfloat[n];
-	for (int i = 0; i < first.length; i++) {
+	for (size_t i = 0; i < first.length; i++) {
 		result[i] = first.values[i];
 	}
-	for (int i = 0; i < second.length; i++) {
+	for (size_t i = 0; i < second.length; i++) {
 		result[i+first.length] = second.values[i];
 	}
 	//printf("\n%i\n", n);
@@ -220,7 +242,7 @@ SphereVertices::SphereVertices(float r, int subdivisions) : Attribute(20 * 3 * 3
 		for (int n = subdivisions; n > 0; n--) {
 
 			Attribute newvertices(0, 0);
-			for (int i = 0; i < length; i += 9) {
+			for (size_t i = 0; i < length; i += 9) {
 				//Take triangle ABC with A = Vi -> Vi+2, B = Vi+3 -> Vi+5 and C = Vi+6 -> Vi+8
 				glm::vec3 
 					A(vertices[i], vertices[i+1], vertices[i+2]), 
@@ -260,16 +282,16 @@ SphereVertices::SphereVertices(float r, int subdivisions) : Attribute(20 * 3 * 3
 
 	//Set values
 	values = new GLfloat[length];
-	for (int i = 0; i < length; i++) {
+	for (size_t i = 0; i < length; i++) {
 		values[i] = vertices[i];
 	}
 }
 
 //Vertex Attributes
 
-Normals::Normals(int vertexCount, GLfloat * vertices, bool smooth) : Attribute(vertexCount*3) {
+Normals::Normals(size_t vertexCount, GLfloat * vertices, bool smooth) : Attribute(vertexCount*3) {
 	//Process vertices to find normals for each triangle
-	for (int i = 0; i < length; i += 9) {
+	for (size_t i = 0; i < length; i += 9) {
 		glm::vec3 a(vertices[i], vertices[i+1], vertices[i+2]);
 		glm::vec3 b(vertices[i+3], vertices[i+4], vertices[i+5]);
 		glm::vec3 c(vertices[i+6], vertices[i+7], vertices[i+8]);
@@ -285,7 +307,7 @@ Normals::Normals(int vertexCount, GLfloat * vertices, bool smooth) : Attribute(v
 	}
 
 	//Normalize
-	for (int i = 0; i < length; i += 3) {
+	for (size_t i = 0; i < length; i += 3) {
 		glm::vec3 normal = glm::vec3(values[i], values[i+1], values[i+2]);
 		float magnitude = sqrt(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
 
@@ -299,12 +321,12 @@ Normals::Normals(int vertexCount, GLfloat * vertices, bool smooth) : Attribute(v
 		//int * commons = new int[length/3];
 		GLfloat * sum = new GLfloat[length];
 
-		for (int i = 0; i < length; i += 3) {
+		for (size_t i = 0; i < length; i += 3) {
 			//commons[i/3] = 0;
 			sum[i] = 0;
 			sum[i+1] = 0;
 			sum[i+2] = 0;
-			for (int j = 0; j < length; j += 3) {
+			for (size_t j = 0; j < length; j += 3) {
 				if (vertices[i] == vertices[j] && vertices[i+1] == vertices[j+1] && vertices[i+2] == vertices[j+2]) {
 					//two vertices are equal
 					//The normal should only be taken in to account if an identical one hasn't allready been added
@@ -327,7 +349,7 @@ Normals::Normals(int vertexCount, GLfloat * vertices, bool smooth) : Attribute(v
 	}
 
 	//Normalize
-	for (int i = 0; i < length; i += 3) {
+	for (size_t i = 0; i < length; i += 3) {
 		glm::vec3 normal = glm::vec3(values[i], values[i+1], values[i+2]);
 		float magnitude = sqrt(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
 		values[i] = normal.x / magnitude;
@@ -336,9 +358,9 @@ Normals::Normals(int vertexCount, GLfloat * vertices, bool smooth) : Attribute(v
 	}
 }
 
-SolidColor::SolidColor(int vertexCount, float r, float g, float b) : Attribute(vertexCount*3) {
+SolidColor::SolidColor(size_t vertexCount, float r, float g, float b) : Attribute(vertexCount*3) {
 	//values = new GLfloat[length];
-	for (int i = 0; i < length; i += 3) {
+	for (size_t i = 0; i < length; i += 3) {
 		//printf("%i: %f, %f, %f\n",i/3, r, g, b);
 		values[i] = r;
 		values[i+1] = g;

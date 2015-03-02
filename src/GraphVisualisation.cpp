@@ -55,6 +55,56 @@ float* Graph::getNode(int i) {
 	return nodes[i];
 }
 
+Graph* getEdges(Graph* g, int from, int to) {
+	Graph* edgegraph = new Graph();
+	int edgeCount = g->getEdgeCount();
+	for (int i = from; i < to && i < edgeCount; i++) {
+		float* e = g->getEdge(i);
+		edgegraph->AddEdge(e[0], e[1], e[2], e[3], e[4], e[5]);
+	}
+	return edgegraph;
+}
+
+Graph* getNodes(Graph* g, int from, int to) {
+	Graph* nodegraph = new Graph();
+	int nodeCount = g->getNodeCount();
+	for (int i = from; i < to && i < nodeCount; i++) {
+		float* n = g->getNode(i);
+		nodegraph->AddNode(n[0], n[1], n[2]);
+	}
+	return nodegraph;
+}
+
+std::vector<Graph*> DivideGraph(Graph* g) {
+	std::vector<Graph*> graphs;
+	int maxgraphsize = 66535;
+
+	//Approach: divide into several graphs with either edges or nodes without overlap until rest fits.
+	int maxedges = maxgraphsize / (6*6*3);
+	int maxnodes = maxgraphsize / (20 * 3 * 3 * 4);
+
+	int edgeIndex = 0;
+	int edgeCount = g->getEdgeCount();
+	int nodeIndex = 0;
+	int nodeCount = g->getNodeCount();
+
+	while ((edgeCount - edgeIndex) * 6 * 6 * 3 + (nodeCount - nodeIndex) * 20 * 3 * 3 * 4 > maxgraphsize) {
+		graphs.push_back(getEdges(g, edgeIndex, edgeIndex + maxedges));
+		edgeIndex += maxedges;
+		graphs.push_back(getNodes(g, nodeIndex, nodeIndex + maxnodes));
+		nodeIndex += maxnodes;
+	}
+
+	Graph* rest = getEdges(g, edgeIndex, edgeIndex + maxedges);
+	for (int i = nodeIndex; i < nodeIndex + maxnodes && i < nodeCount; i++) {
+		float* n = g->getNode(i);
+		rest->AddNode(n[0], n[1], n[2]);
+	}
+	graphs.push_back(rest);
+
+	return graphs;
+}
+
 GraphVertices::GraphVertices(Graph* g, int edgeCount, int nodeCount, float scale, float thickness) : Attribute(edgeCount * 6 * 6 * 3 + nodeCount * 20 * 3 * 3 * 4) {
 	Attribute graphVertices = Attribute(0, 0);
 	
