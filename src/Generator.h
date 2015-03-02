@@ -143,6 +143,7 @@ class Generator {
 	void assignElevations();
 	void assignElevationsCorner();
 	void assignElevationsCoastAndLand();
+	void assignElevationsRedistribute();
 	void assignElevationsPolygons();
 	void assignMoisture();
 	void assignBiomes();
