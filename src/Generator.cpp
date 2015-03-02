@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cfloat>
 #include <queue>
+#include <algorithm>
 
 #include "HexPointSelector.h"
 #include "RandomPointSelector.h"
@@ -21,6 +22,13 @@ struct vec2comp {
 		}
 	}
 };
+
+struct CornerElevationComp {
+	bool operator() (Map::Corner*& lhs, Map::Corner*& rhs) {
+		return lhs->elevation < rhs->elevation;
+	}
+};
+
 
 Generator::Generator(int _width, int _height, int _sampleSize): centers(), edges(), corners() {
 	width = _width;
@@ -209,6 +217,7 @@ void Generator::addFeatures() {
 void Generator::assignElevations() {
 	assignElevationsCorner();
 	assignElevationsCoastAndLand();
+	assignElevationsRedistribute();
 	assignElevationsPolygons();
 
 	if (heightGraph) {
@@ -331,6 +340,40 @@ void Generator::assignElevationsCoastAndLand() {
 		(*it)->ocean = (numOcean == (*it)->touches.size());
 		(*it)->coast = (numOcean > 0) && (numLand > 0);
 		(*it)->water = (*it)->border || ((numLand != (*it)->touches.size()) && !(*it)->coast);
+
+		// Set the elevation of ocean and coast tiles to 0
+		if ((*it)->ocean || (*it)->coast) {
+			(*it)->elevation = 0.0f;
+		}
+	}
+}
+
+void Generator::assignElevationsRedistribute() {
+	std::vector<Map::Corner*> landCorners;
+
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		if (!((*it)->ocean || (*it)->coast)) {
+			landCorners.push_back(*it);
+		}
+	}
+	std::sort(landCorners.begin(), landCorners.end(), CornerElevationComp());
+
+	float SCALE_FACTOR = 1.1f;
+	int i = 0;
+	float x;
+	float y;
+	for (std::vector<Map::Corner*>::iterator it = landCorners.begin(); it != landCorners.end(); it++) {
+		y = i / (landCorners.size() - 1);
+
+		x = sqrt(SCALE_FACTOR) - sqrt(SCALE_FACTOR * (1-y));
+
+		if (x > 1.0f) {
+			x = 1.0f;
+		}
+
+		(*it)->elevation = x;
+
+		i++;
 	}
 }
 
