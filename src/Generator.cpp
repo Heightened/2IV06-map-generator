@@ -10,6 +10,7 @@
 #include "PoissonPointSelector.h"
 #include "SquareMapShaper.h"
 #include "RadialMapShaper.h"
+#include "BlobMapShaper.h"
 #include "vendor/VoronoiDiagramGenerator.h"
 
 #define GENERATOR_MIN_DISTANCE 1.0e-6
@@ -53,7 +54,7 @@ PointSelector *Generator::select() {
 };
 
 MapShaper *Generator::shape() {
-	return new RadialMapShaper();
+	return new BlobMapShaper();
 };
 
 std::vector<glm::vec2> Generator::placePoints(PointSelector *psel) {
