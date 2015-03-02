@@ -39,6 +39,7 @@ Generator::Generator(int _width, int _height, int _sampleSize): centers(), edges
 	sampleSize = _sampleSize;
 
 	pointType = POINTSELECTOR_RANDOM;
+	shaperType = MAPSHAPER_RADIAL;
 };
 
 PointSelector *Generator::select() {
@@ -54,7 +55,15 @@ PointSelector *Generator::select() {
 };
 
 MapShaper *Generator::shape() {
-	return new BlobMapShaper();
+	switch (shaperType) {
+	case MAPSHAPER_SQUARE:
+		return new SquareMapShaper();
+	case MAPSHAPER_BLOB:
+		return new BlobMapShaper();
+	case MAPSHAPER_RADIAL:
+	default:
+		return new RadialMapShaper();
+	}
 };
 
 std::vector<glm::vec2> Generator::placePoints(PointSelector *psel) {

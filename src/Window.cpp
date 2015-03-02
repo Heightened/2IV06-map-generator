@@ -53,9 +53,15 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
+	//Map shaper
+	sizer->Add(new wxStaticText(toolboxPanel, -1, "Map shaper:", wxDefaultPosition, wxDefaultSize));
+	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioMapShaperRadial, "Radial", wxDefaultPosition, wxDefaultSize, wxRB_GROUP));
+	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioMapShaperSquare, "Square"));
+	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioMapShaperBlob, "RedBlobGames"));
+
 	//Point selector
 	sizer->Add(new wxStaticText(toolboxPanel, -1, "Point selector:", wxDefaultPosition, wxDefaultSize));
-	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorRandom, "Random"));
+	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorRandom, "Random", wxDefaultPosition, wxDefaultSize, wxRB_GROUP));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorHex, "Hexagonal"));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorPoisson, "Poisson"));
 
@@ -122,6 +128,18 @@ void GeneratorFrame::OnPointPoisson(wxCommandEvent& event) {
 	gen->setPointSelectorType(POINTSELECTOR_POISSON);
 }
 
+void GeneratorFrame::OnShapeRadial(wxCommandEvent& event) {
+	gen->setMapShaperType(MAPSHAPER_RADIAL);
+}
+
+void GeneratorFrame::OnShapeSquare(wxCommandEvent& event) {
+	gen->setMapShaperType(MAPSHAPER_SQUARE);
+}
+
+void GeneratorFrame::OnShapeBlob(wxCommandEvent& event) {
+	gen->setMapShaperType(MAPSHAPER_BLOB);
+}
+
 wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
     EVT_MENU(ID_New,   GeneratorFrame::OnNew)
 	EVT_MENU(ID_Open,   GeneratorFrame::OnOpen)
@@ -133,6 +151,9 @@ wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
 	EVT_RADIOBUTTON(ID_RadioPointSelectorRandom, GeneratorFrame::OnPointRandom)
 	EVT_RADIOBUTTON(ID_RadioPointSelectorHex, GeneratorFrame::OnPointHex)
 	EVT_RADIOBUTTON(ID_RadioPointSelectorPoisson, GeneratorFrame::OnPointPoisson)
+	EVT_RADIOBUTTON(ID_RadioMapShaperRadial, GeneratorFrame::OnShapeRadial)
+	EVT_RADIOBUTTON(ID_RadioMapShaperSquare, GeneratorFrame::OnShapeSquare)
+	EVT_RADIOBUTTON(ID_RadioMapShaperBlob, GeneratorFrame::OnShapeBlob)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(GeneratorApp);

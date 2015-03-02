@@ -114,6 +114,15 @@ enum PointSelectorType {
 };
 
 /**
+ * Map shaper type
+ */
+enum MapShaperType {
+	MAPSHAPER_RADIAL,
+	MAPSHAPER_SQUARE,
+	MAPSHAPER_BLOB
+};
+
+/**
  * Generates a new Island based on a set of parameters
  */
 class Generator {
@@ -126,6 +135,8 @@ class Generator {
 
 	// The point selector to use
 	PointSelectorType pointType;
+	// The map shaper to use
+	MapShaperType shaperType;
 
 	// A Graph representing the current polygons in the map
 	Graph *polygonGraph;
@@ -176,6 +187,14 @@ class Generator {
 		 */
 		void setPointSelectorType(PointSelectorType t) {
 			pointType = t;
+		}
+
+		/**
+		 * Sets the map shaper type to use
+		 * @param in MapShaperType type The new type
+		 */
+		void setMapShaperType(MapShaperType t) {
+			shaperType = t;
 		}
 
 		/**
