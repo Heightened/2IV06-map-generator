@@ -214,17 +214,38 @@ wxBEGIN_EVENT_TABLE(ShaderCanvas, wxGLCanvas)
 wxEND_EVENT_TABLE()
 
 void ShaderCanvas::GenerateGeometry() {
+	//TODO clear memory of previously generated objects
+	for(std::vector<ColoredObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+		delete (*it);
+	}
+	objects.clear();
+
 	Graph *g = gen->getPolygonGraph();
 
 	int edges = g->getEdgeCount();
 	int nodes = g->getNodeCount();
-	GraphVertices vertices(g, edges, nodes, 3.0f, 0.1f);
-	//SphereVertices vertices(1.0f, 3); // 0,1,2 or 3 are the only values for subdivisions, higher values will cause exceptions
-	//BoxVertices vertices(2.0f, 2.0f, 2.0f);
-	Normals normals(vertices.size()/3, vertices, true);
-	SolidColor color(vertices.size()/3, 0.8f, 0.5f, 0.0f);
-	const GLfloat* attributes[] = {vertices, normals, color};
-	object = new ColoredObject(vertices.size()/3, &attributes[0]);
+
+	//Graphvertices limited at: edgeCount * 6 * 6 * 3 + nodeCount * 20 * 3 * 3 * 4 <= 65535 = 2^16-1
+	size_t sizerequired = edges * 6 * 6 * 3 + nodes * 20 * 3 * 3 * 4;
+
+	//Subdivide if needed
+	size_t divisions = (sizerequired / 65536) + 1;
+	wxLogError(wxT("subdivide %i times, if optimal!"), divisions);
+
+	std::vector<Graph*> graphs = DivideGraph(g);
+
+	wxLogError(wxT("required vertex values: %i, divided: %i"), sizerequired, graphs.size());
+
+	for (std::vector<Graph*>::iterator it = graphs.begin(); it != graphs.end(); ++it) {
+		edges = (*it)->getEdgeCount();
+		nodes = (*it)->getNodeCount();
+		GraphVertices vertices((*it), edges, nodes, 3.0f, 0.1f);
+		Normals normals(vertices.size()/3, vertices, true);
+		SolidColor color(vertices.size()/3, 0.8f, 0.5f, 0.0f);
+		const GLfloat* attributes[] = {vertices, normals, color};
+		ColoredObject* object = new ColoredObject(vertices.size()/3, &attributes[0]);
+		objects.push_back(object);
+	}
 }
 
 void ShaderCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
@@ -242,14 +263,10 @@ void ShaderCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
     //glUseProgram(shaders);
 	
 	//Draw geometry
-	glm::mat4 Matrix(1,0,0,0,
-						0,1,0,0,
-						0,0,1,0,
-						0,0,0,1);
-	for(int i = 0; i < 1; i++) {
-		viewer->send(Matrix);
-		object->draw();
-		Matrix = glm::translate(Matrix, glm::vec3(3,0,0));
+	viewer->send(glm::mat4(1.0f));
+
+	for(std::vector<ColoredObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+		(*it)->draw();
 	}
 	
 	viewer->setWindowSize(width, height);

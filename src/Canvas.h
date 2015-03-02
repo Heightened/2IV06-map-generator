@@ -100,7 +100,7 @@ public:
 
 class ShaderCanvas : public Canvas {
 	UniformMatrices* viewer;
-	ColoredObject* object;
+	std::vector<ColoredObject*> objects;
 	wxDECLARE_EVENT_TABLE();
 
 	void Zoom(float strength);
