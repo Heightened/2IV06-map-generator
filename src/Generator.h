@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 #include "PointSelector.h"
+#include "MapShaper.h"
 #include "GraphVisualisation.h"
 
 namespace Map {
@@ -136,12 +137,13 @@ class Generator {
 	std::vector<Map::Edge> edges;
 	std::vector<Map::Corner*> corners;
 
-	PointSelector *shape();
+	MapShaper *shape();
+	PointSelector *select();
 	std::vector<glm::vec2> placePoints(PointSelector*);
 	void buildGraph(std::vector<glm::vec2>);
-	void addFeatures();
-	void assignElevations();
-	void assignElevationsCorner();
+	void addFeatures(MapShaper*);
+	void assignElevations(MapShaper*);
+	void assignElevationsCorner(MapShaper*);
 	void assignElevationsCoastAndLand();
 	void assignElevationsRedistribute();
 	void assignElevationsPolygons();
