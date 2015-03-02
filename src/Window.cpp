@@ -44,6 +44,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	wxLogStream(NULL);
 
 	gen = new Generator(600, 600, 2000);
+	//gen = new Generator(40, 40, 60);
 	mapPreview = new CANVAS(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()), gen);
 
 	//Initialize Generation toolbox
