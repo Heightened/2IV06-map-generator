@@ -51,6 +51,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	wxPanel* toolboxPanel = new wxPanel(this, -1, wxPoint(this->GetClientSize().GetWidth()-120,0), wxSize(120, this->GetClientSize().GetHeight()), 0, "Generation Toolbox");
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
 	//Point selector
 	sizer->Add(new wxStaticText(toolboxPanel, -1, "Point selector:", wxDefaultPosition, wxDefaultSize));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorRandom, "Random"));
@@ -67,7 +68,8 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 }
 
 void GeneratorFrame::InitializeGL() {
-	glContext = mapPreview->GetContext();
+	glContext = new wxGLContext(mapPreview, NULL);//mapPreview->GetContext();
+	mapPreview->Initialize(glContext);
 }
 
 void GeneratorFrame::OnExit(wxCommandEvent& event) {

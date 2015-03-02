@@ -227,9 +227,9 @@ void ShaderCanvas::GenerateGeometry() {
 }
 
 void ShaderCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
-	if (!init) {
-		Initialize();
-	}
+	//if (!init) {
+	//	Initialize();
+	//}
 	wxPaintDC dc(this);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -257,8 +257,9 @@ void ShaderCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	SwapBuffers();
 }
 
-void ShaderCanvas::Initialize() {
-	SetCurrent();
+void ShaderCanvas::Initialize(wxGLContext* context) {
+	SetCurrent(*context);
+
 	glewExperimental = true;
 	bool glew = glewInit();
 	if (glew != GLEW_OK) {

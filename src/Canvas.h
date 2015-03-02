@@ -93,6 +93,9 @@ public:
 	virtual void GenerateGeometry() = 0;
 	virtual void Paint(wxPaintEvent& WXUNUSED(event)) = 0;
 	virtual void Initialize() = 0;
+	virtual void Initialize(wxGLContext* context) {
+		Initialize();
+	}
 };
 
 class ShaderCanvas : public Canvas {
@@ -103,5 +106,6 @@ public:
 	ShaderCanvas(wxWindow* parent, wxSize size, Generator *gen): Canvas(parent, size, gen){}
 	virtual void GenerateGeometry();
 	virtual void Paint(wxPaintEvent& WXUNUSED(event));
-	virtual void Initialize();
+	virtual void Initialize() {};
+	virtual void Initialize(wxGLContext* context);
 };
