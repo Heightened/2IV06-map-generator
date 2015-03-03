@@ -11,7 +11,7 @@ in vec3 normalVector;
 out vec3 color;
 
 void main() {
-	vec3 light = vec3(60,60,15);
+	vec3 light = vec3(50,50,50);
 
 	color = fColor;
 
@@ -34,5 +34,5 @@ void main() {
 	float cosAlpha = clamp( dot( E,R ), 0,1 );
 
 	// Combine to calculate color
-	color = vec3(0.2f,0.2f,0.2f) + LightPower / (distance*distance) * (MaterialDiffuseColor * cosTheta + MaterialSpecularColor * cosAlpha);
+	color = /*vec3(0.2f,0.2f,0.2f) + */LightPower / (distance*distance) * (MaterialDiffuseColor * cosTheta + MaterialSpecularColor * cosAlpha);
 }

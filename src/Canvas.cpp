@@ -3,8 +3,6 @@
 
 #include <wx/dcclient.h>
 
-#include "GraphVisualisation.h"
-
 GLuint initShaders(const char * VertexShaderFile, const char * FragmentShaderFile) {
 	const GLubyte * a = glGetString(GL_SHADING_LANGUAGE_VERSION_ARB);
 	//wxLogError(wxT("%i\n"), a);
@@ -220,7 +218,18 @@ void ShaderCanvas::GenerateGeometry() {
 	}
 	objects.clear();
 
-	Graph *g = gen->getPolygonGraph();
+	//SURFACE VISUALISATION 
+	//* 
+
+	std::vector<Map::Center*> centers = gen->getCenters();
+	wxLogError(wxT("centers size: %i"), centers.size());
+
+	surface = new MapSurface(centers);
+
+	// GRAPH VISUALISATION
+	/*/
+
+	Graph *g = gen->getHeightGraph();//getPolygonGraph();
 
 	int edges = g->getEdgeCount();
 	int nodes = g->getNodeCount();
@@ -239,13 +248,14 @@ void ShaderCanvas::GenerateGeometry() {
 	for (std::vector<Graph*>::iterator it = graphs.begin(); it != graphs.end(); ++it) {
 		edges = (*it)->getEdgeCount();
 		nodes = (*it)->getNodeCount();
-		GraphVertices vertices((*it), edges, nodes, 3.0f, 0.1f);
+		GraphVertices vertices((*it), edges, nodes, 1.0f, 0.1f);
 		Normals normals(vertices.size()/3, vertices, true);
 		SolidColor color(vertices.size()/3, 0.8f, 0.5f, 0.0f);
 		const GLfloat* attributes[] = {vertices, normals, color};
 		ColoredObject* object = new ColoredObject(vertices.size()/3, &attributes[0]);
 		objects.push_back(object);
 	}
+	//*/
 }
 
 void ShaderCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
@@ -268,6 +278,10 @@ void ShaderCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	for(std::vector<ColoredObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
 		(*it)->draw();
 	}
+
+	//glDisable(GL_CULL_FACE);
+
+	surface->draw();
 	
 	viewer->setWindowSize(width, height);
 	viewer->setFov(60.0f);
