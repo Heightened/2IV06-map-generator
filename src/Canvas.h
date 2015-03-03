@@ -4,7 +4,6 @@
 
 #include <wx/glcanvas.h>
 
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -14,6 +13,7 @@
 #include <iostream>
 
 #include "GraphVisualisation.h"
+#include "MapSurfaceVisualisation.h"
 #include "Generator.h"
 
 #ifndef PREDEFINEDOBJECTS
@@ -68,7 +68,7 @@ public:
 	//UniformMatrices(GLuint shaders, glm::mat4 perspective, glm::mat4 view, glm::mat4 model);
 	UniformMatrices(GLuint shaders,
 					glm::mat4 projection = glm::perspective(60.0f, 2.0f, 0.1f, 1000.0f),
-					glm::vec3 position = glm::vec3(80,80,30), glm::vec3 focus = glm::vec3(60,60,0),
+					glm::vec3 position = glm::vec3(60,60,30), glm::vec3 focus = glm::vec3(20,20,0),
 					glm::mat4 model = glm::mat4(1.0f), 
 					const char * combinedName = "Combined", 
 					const char * viewName = "View", 
@@ -101,6 +101,7 @@ public:
 class ShaderCanvas : public Canvas {
 	UniformMatrices* viewer;
 	std::vector<ColoredObject*> objects;
+	MapSurface* surface;
 	wxDECLARE_EVENT_TABLE();
 
 	void Zoom(float strength);
