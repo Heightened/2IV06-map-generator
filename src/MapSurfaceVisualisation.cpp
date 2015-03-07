@@ -4,8 +4,8 @@
 
 #include "wx/log.h"
 
-typedef std::vector<Map::Edge, std::allocator<Map::Edge>> BORDERLIST;
-typedef std::set<Map::Corner*, std::less<Map::Corner*>, std::allocator<Map::Corner*>> CORNERSET;
+typedef std::vector<Map::Edge, std::allocator<Map::Edge> > BORDERLIST;
+typedef std::set<Map::Corner*, std::less<Map::Corner*>, std::allocator<Map::Corner*> > CORNERSET;
 
 MapSurfaceCellVertices::MapSurfaceCellVertices(Map::Center* center, int size) : Attribute(size * 3 * 3) {
 	Attribute vertices = Attribute(0, 0);
