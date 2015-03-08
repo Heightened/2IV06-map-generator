@@ -57,13 +57,13 @@ void IO::exportMap(FILE *file, std::vector<Map::Center*> centers) {
 	int cornercount = corners.size();
 	IO::Corner io_corners[cornercount];
 	for (std::set<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
-		io_centers[(*it)->index].index = (*it)->index;
-		io_centers[(*it)->index].point = (*it)->point;
-		io_centers[(*it)->index].water = (*it)->water;
-		io_centers[(*it)->index].ocean = (*it)->ocean;
-		io_centers[(*it)->index].coast = (*it)->coast;
-		io_centers[(*it)->index].border = (*it)->border;
-		io_centers[(*it)->index].elevation = (*it)->elevation;
+		io_corners[(*it)->index].index = (*it)->index;
+		io_corners[(*it)->index].point = (*it)->point;
+		io_corners[(*it)->index].water = (*it)->water;
+		io_corners[(*it)->index].ocean = (*it)->ocean;
+		io_corners[(*it)->index].coast = (*it)->coast;
+		io_corners[(*it)->index].border = (*it)->border;
+		io_corners[(*it)->index].elevation = (*it)->elevation;
 
 		for (std::set<Map::Center*>::iterator cit = (*it)->touches.begin(); cit != (*it)->touches.end(); cit++) {
 			IO::Touches_rel t;

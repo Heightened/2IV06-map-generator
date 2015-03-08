@@ -4,6 +4,8 @@
 
 #include "Window.h"
 
+#include "MapIO.h"
+
 #ifdef __WINDOWS__
 #define CANVAS ShaderCanvas
 #else
@@ -66,7 +68,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorPoisson, "Poisson"));
 
 	sizer->Add(new wxButton(toolboxPanel, ID_BtnGenerate, "Generate Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "generateButton"), 0, 0, 0);
-	sizer->Add(new wxButton(toolboxPanel, -1, "Export Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "exportButton"), 0, 0, 0);
+	sizer->Add(new wxButton(toolboxPanel, ID_BtnExport, "Export Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "exportButton"), 0, 0, 0);
 	SetSizer(sizer);
 
 	Graph *g = new Graph();
@@ -102,7 +104,22 @@ void GeneratorFrame::OnSave(wxCommandEvent& event) {
 }
 
 void GeneratorFrame::OnExportMap(wxCommandEvent& event) {
-    wxLogMessage("TODO");
+	wxFileDialog* ExportDialog = new wxFileDialog(this, _("Export map"), wxEmptyString, wxEmptyString, _("Map files|*.map"), wxFD_SAVE, wxDefaultPosition);
+
+	// Creates a "open file" dialog with 4 file types
+	if (ExportDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "Cancel"
+	{
+		wxString CurrentDocPath = ExportDialog->GetPath();
+		FILE * file= fopen(CurrentDocPath.c_str().AsChar(), "wb");
+		if (file != NULL) {
+			IO::exportMap(file, gen->getCenters());
+		} else {
+			wxLogMessage("Failed to open file");
+		}
+	}
+
+	// Clean up after ourselves
+	ExportDialog->Destroy();
 }
 
 void GeneratorFrame::OnGenerate(wxCommandEvent& event) {
@@ -148,6 +165,7 @@ wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
     EVT_MENU(wxID_EXIT,  GeneratorFrame::OnExit)
     EVT_MENU(wxID_ABOUT, GeneratorFrame::OnAbout)
 	EVT_BUTTON(ID_BtnGenerate, GeneratorFrame::OnGenerate)
+	EVT_BUTTON(ID_BtnExport, GeneratorFrame::OnExportMap)
 	EVT_RADIOBUTTON(ID_RadioPointSelectorRandom, GeneratorFrame::OnPointRandom)
 	EVT_RADIOBUTTON(ID_RadioPointSelectorHex, GeneratorFrame::OnPointHex)
 	EVT_RADIOBUTTON(ID_RadioPointSelectorPoisson, GeneratorFrame::OnPointPoisson)

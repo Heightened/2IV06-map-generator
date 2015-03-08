@@ -48,5 +48,6 @@ enum {
 	ID_RadioPointSelectorPoisson = wxID_HIGHEST + 8,
 	ID_RadioMapShaperRadial = wxID_HIGHEST + 9,
 	ID_RadioMapShaperSquare = wxID_HIGHEST + 10,
-	ID_RadioMapShaperBlob = wxID_HIGHEST + 11
+	ID_RadioMapShaperBlob = wxID_HIGHEST + 11,
+	ID_BtnExport = wxID_HIGHEST + 12
 };
