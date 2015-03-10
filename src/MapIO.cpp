@@ -107,7 +107,7 @@ void IO::exportMap(FILE *file, std::vector<Map::Center*> centers) {
 	IO::Border_rel borders_a[borders_count];
 	std::copy(borders.begin(), borders.end(), borders_a);
 
-	int corner_rel_count = corners.size();
+	int corner_rel_count = corner_rel.size();
 	IO::Corner_rel corner_rel_a[corner_rel_count];
 	std::copy(corner_rel.begin(), corner_rel.end(), corner_rel_a);
 
@@ -146,6 +146,156 @@ void IO::exportMap(FILE *file, std::vector<Map::Center*> centers) {
 	fwrite(&adjacent_a, sizeof(IO::Adjacent_rel), adjacent_count, file);
 };
 
-std::vector<Map::Center*> IO::importMap(FILE *file) {
-
+Map::Center *centerFromId(std::vector<Map::Center*> centers, int id) {
+	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+		if ((*it)->index == id) {
+			return (*it);
+		}
+	}
+	return NULL;
 };
+
+Map::Corner *cornerFromId(std::vector<Map::Corner*> corners, int id) {
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		if ((*it)->index == id) {
+			return (*it);
+		}
+	}
+	return NULL;
+};
+
+Map::Edge edgeFromId(std::vector<Map::Edge> edge, int id) {
+	for (std::vector<Map::Edge>::iterator it = edge.begin(); it != edge.end(); it++) {
+		if (it->index == id) {
+			return (*it);
+		}
+	}
+};
+
+std::vector<Map::Center*> IO::importMap(FILE *file) {
+	int centercount;
+	int cornercount;
+	int edgecount;
+
+	int neighbours_count;
+	int borders_count;
+	int corner_rel_count;
+	int touches_count;
+	int protrudes_count;
+	int adjacent_count;
+
+	fread(&centercount, sizeof(int), 1, file);
+	IO::Center io_centers[centercount];
+	fread(&io_centers, sizeof(IO::Center), centercount, file);
+
+	fread(&cornercount, sizeof(int), 1, file);
+	IO::Corner io_corners[cornercount];
+	fread(&io_corners, sizeof(IO::Corner), cornercount, file);
+
+	fread(&edgecount, sizeof(int), 1, file);
+	IO::Edge io_edges[edgecount];
+	fread(&io_edges, sizeof(IO::Edge), edgecount, file);
+
+
+	fread(&neighbours_count, sizeof(int), 1, file);
+	IO::Neighbour_rel neighbours_a[neighbours_count];
+	fread(&neighbours_a, sizeof(IO::Neighbour_rel), neighbours_count, file);
+
+	fread(&borders_count, sizeof(int), 1, file);
+	IO::Border_rel borders_a[borders_count];
+	fread(&borders_a, sizeof(IO::Border_rel), borders_count, file);
+
+	fread(&corner_rel_count, sizeof(int), 1, file);
+	IO::Corner_rel corner_rel_a[corner_rel_count];
+	fread(&corner_rel_a, sizeof(IO::Corner_rel), corner_rel_count, file);
+
+	fread(&touches_count, sizeof(int), 1, file);
+	IO::Touches_rel touches_a[touches_count];
+	fread(&touches_a, sizeof(IO::Touches_rel), touches_count, file);
+
+	fread(&protrudes_count, sizeof(int), 1, file);
+	IO::Protrudes_rel protrudes_a[protrudes_count];
+	fread(&protrudes_a, sizeof(IO::Protrudes_rel), protrudes_count, file);
+
+	fread(&adjacent_count, sizeof(int), 1, file);
+	IO::Adjacent_rel adjacent_a[adjacent_count];
+	fread(&adjacent_a, sizeof(IO::Adjacent_rel), adjacent_count, file);
+
+	std::vector<Map::Center*> centers;
+	std::vector<Map::Corner*> corners;
+	std::vector<Map::Edge> edges;
+
+	//Rebuild Map data structures
+
+	for (int i = 0; i < centercount; i++) {
+		Map::Center *c = new Map::Center(io_centers[i].index, io_centers[i].point);
+		c->water = io_centers[i].water;
+		c->ocean = io_centers[i].ocean;
+		c->coast = io_centers[i].coast;
+		c->border = io_centers[i].border;
+		c->elevation = io_centers[i].elevation;
+
+		centers.push_back(c);
+	}
+
+	for (int i = 0; i < cornercount; i++) {
+		Map::Corner *c = new Map::Corner(io_corners[i].index, io_corners[i].point);
+		c->water = io_corners[i].water;
+		c->ocean = io_corners[i].ocean;
+		c->coast = io_corners[i].coast;
+		c->border = io_corners[i].border;
+		c->elevation = io_corners[i].elevation;
+
+		corners.push_back(c);
+	}
+
+	for (int i = 0; i < edgecount; i++) {
+		Map::Edge e(
+			io_edges[i].index,
+			centerFromId(centers, io_edges[i].center_d0),
+			centerFromId(centers, io_edges[i].center_d1),
+			cornerFromId(corners, io_edges[i].corner_v0),
+			cornerFromId(corners, io_edges[i].corner_v1),
+			io_edges[i].midway
+		);
+		edges.push_back(e);
+	}
+
+	//Rebuild relations
+	//The structure here is always the same.
+	//We use the *FromId functions to get a pointer to the out node,
+	//Then we add the in node to the relation structure on the out node
+
+	for (int i = 0; i < neighbours_count; i++) {
+		centerFromId(centers, neighbours_a[i].center_out)
+			->neighbours.insert(centerFromId(centers, neighbours_a[i].center_in));
+	}
+
+	for (int i = 0; i < borders_count; i++) {
+		centerFromId(centers, borders_a[i].center_out)
+			->borders.push_back(edgeFromId(edges, borders_a[i].edge_in));
+	}
+
+	for (int i = 0; i < corner_rel_count; i++) {
+		centerFromId(centers, corner_rel_a[i].center_out)
+			->corners.insert(cornerFromId(corners, corner_rel_a[i].corner_in));
+	}
+
+	for (int i = 0; i < touches_count; i++) {
+		cornerFromId(corners, touches_a[i].corner_out)
+			->touches.insert(centerFromId(centers, touches_a[i].center_in));
+	}
+
+	for (int i = 0; i < protrudes_count; i++) {
+		cornerFromId(corners, protrudes_a[i].corner_out)
+			->protrudes.push_back(edgeFromId(edges, protrudes_a[i].edge_in));
+	}
+
+	for (int i = 0; i < adjacent_count; i++) {
+		cornerFromId(corners, adjacent_a[i].corner_out)
+			->adjacent.insert(cornerFromId(corners, adjacent_a[i].corner_in));
+	}
+
+	return centers;
+};
+

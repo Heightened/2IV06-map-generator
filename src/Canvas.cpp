@@ -258,6 +258,20 @@ void ShaderCanvas::GenerateGeometry() {
 	//*/
 }
 
+void ShaderCanvas::GenerateGeometry(std::vector<Map::Center*> centers) {
+	for(std::vector<ColoredObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+		delete (*it);
+	}
+	objects.clear();
+
+	//SURFACE VISUALISATION
+	//*
+
+	wxLogError(wxT("centers size: %i"), centers.size());
+
+	surface = new MapSurface(centers);
+}
+
 void ShaderCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	//if (!init) {
 	//	Initialize();
