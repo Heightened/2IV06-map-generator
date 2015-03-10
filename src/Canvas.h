@@ -91,6 +91,7 @@ public:
 		gen = generator;
 	}
 	virtual void GenerateGeometry() = 0;
+	virtual void GenerateGeometry(std::vector<Map::Center*>) = 0;
 	virtual void Paint(wxPaintEvent& WXUNUSED(event)) = 0;
 	virtual void Initialize() = 0;
 	virtual void Initialize(wxGLContext* context) {
@@ -110,6 +111,7 @@ class ShaderCanvas : public Canvas {
 public:
 	ShaderCanvas(wxWindow* parent, wxSize size, Generator *gen): Canvas(parent, size, gen){}
 	virtual void GenerateGeometry();
+	virtual void GenerateGeometry(std::vector<Map::Center*>);
 	virtual void Paint(wxPaintEvent& WXUNUSED(event));
 	virtual void Initialize() {};
 	virtual void Initialize(wxGLContext* context);

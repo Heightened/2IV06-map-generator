@@ -24,6 +24,7 @@ class SimpleCanvas : public Canvas {
 public:
 	SimpleCanvas(wxWindow* parent, wxSize size, Generator *gen): Canvas(parent, size, gen){};
 	virtual void GenerateGeometry();
+	virtual void GenerateGeometry(std::vector<Map::Center*>);
 	virtual void Paint(wxPaintEvent& WXUNUSED(event));
 	virtual void Initialize();
 };

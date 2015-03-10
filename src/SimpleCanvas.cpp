@@ -50,6 +50,10 @@ void SimpleCanvas::GenerateGeometry() {
 	centers = gen->getCenters();
 }
 
+void SimpleCanvas::GenerateGeometry(std::vector<Map::Center*> _centers) {
+	centers = _centers;
+}
+
 void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	if (!init) {
 		Initialize();

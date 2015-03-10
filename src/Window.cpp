@@ -96,7 +96,23 @@ void GeneratorFrame::OnNew(wxCommandEvent& event) {
 }
 
 void GeneratorFrame::OnOpen(wxCommandEvent& event) {
-    wxLogMessage("TODO");
+	wxFileDialog* ImportDialog = new wxFileDialog(this, _("Open map"), wxEmptyString, wxEmptyString, _("Map files|*.map"), wxFD_OPEN, wxDefaultPosition);
+
+	// Creates a "open file" dialog with 4 file types
+	if (ImportDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "Cancel"
+	{
+		wxString CurrentDocPath = ImportDialog->GetPath();
+		FILE * file= fopen(CurrentDocPath.c_str().AsChar(), "rb");
+		if (file != NULL) {
+			mapPreview->GenerateGeometry(IO::importMap(file));
+			mapPreview->Refresh(false);
+		} else {
+			wxLogMessage("Failed to open file");
+		}
+	}
+
+	// Clean up after ourselves
+	ImportDialog->Destroy();
 }
 
 void GeneratorFrame::OnSave(wxCommandEvent& event) {
