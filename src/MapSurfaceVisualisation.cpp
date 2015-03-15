@@ -14,6 +14,8 @@ MapSurfaceCellVertices::MapSurfaceCellVertices(Map::Center* center, int size) : 
 	wxLogError(wxT("elevation: %f, size: %i"), center->elevation, size);
 
 	for(BORDERLIST::iterator it = center->borders.begin(); it != center->borders.end(); ++it) {
+		if (&(*it) == NULL) continue;
+
 		glm::vec3 a((*it).v0->point, (*it).v0->elevation);
 		glm::vec3 b((*it).v1->point, (*it).v1->elevation);
 		
@@ -25,9 +27,9 @@ MapSurfaceCellVertices::MapSurfaceCellVertices(Map::Center* center, int size) : 
 		}
 
 		GLfloat triangle[] = {
-			a.x, a.y, a.z,
-			b.x, b.y, b.z,
-			c.x, c.y, c.z
+			a.x, a.y, a.z*3.0f,
+			b.x, b.y, b.z*3.0f,
+			c.x, c.y, c.z*3.0f
 		};
 
 		vertices = vertices + Attribute(3 * 3, &triangle[0]);
@@ -69,7 +71,7 @@ MapSurface::MapSurface(std::vector<Map::Center*> centers) {
 	int i = 0;
 	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); ++it) {
 		MapSurfaceCellVertices vertices((*it), (*it)->borders.size());
-		Normals normals(vertices.size()/3, vertices, false);
+		Normals normals(vertices.size()/3, vertices, true);
 
 		glm::vec3 c(0.2f, 0.8f, 0.2f);
 		if ((*it)->ocean) {

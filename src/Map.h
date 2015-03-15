@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <set>
-#include <glm/vec2.hpp>
+#include <glm/glm.hpp>
 
 namespace Map {
 	class Center;
