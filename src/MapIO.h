@@ -14,6 +14,7 @@ namespace IO {
 		bool coast;
 		bool border;
 		float elevation;
+		float moisture;
 	};
 
 	struct Corner {
@@ -24,6 +25,10 @@ namespace IO {
 		bool coast;
 		bool border;
 		float elevation;
+		float moisture;
+		int corner_downslope;
+		int corner_watershed;
+		int watershed_size;
 	};
 
 	struct Edge {
@@ -33,6 +38,7 @@ namespace IO {
 		int corner_v0;
 		int corner_v1;
 		glm::vec2 midway;
+		int river;
 	};
 
 	// The neighbours relation on Center
