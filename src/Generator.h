@@ -65,6 +65,12 @@ class Generator {
 	void assignElevationsRedistribute();
 	void assignElevationsPolygons();
 	void assignMoisture();
+	void calculateDownslopes();
+	void calculateWatersheds();
+	void createRivers();
+	void assignCornerMoisture();
+	void assignMoistureRedistribute();
+	void assignPolygonMoisture();
 	void assignBiomes();
 
 	Map::Corner *makeCorner(std::map<int, std::vector<Map::Corner*> > &cornerMap, std::vector<Map::Corner*> &corners, glm::vec2 p);
