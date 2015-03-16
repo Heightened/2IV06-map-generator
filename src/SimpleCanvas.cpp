@@ -106,22 +106,18 @@ void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 		}
 		glEnd();
 
-		glColor3f(0.0, 0.0, 0.0);
-		glBegin(GL_LINE_LOOP);
-		for (std::vector<glm::vec2>::iterator eit = cornerPoints.begin(); eit != cornerPoints.end(); eit++) {
-			glVertex2f(NORMALIZE((*eit), width, height));
+		glColor3f(34/255.0f, 85/255.0f, 136/255.0f);
+		for (std::vector<Map::Edge*>::iterator eit = (*it)->borders.begin(); eit != (*it)->borders.end(); eit++) {
+			if ((*eit)->river > 0) {
+				glLineWidth(sqrt((*eit)->river));
+				glBegin(GL_LINES);
+				glVertex2f(NORMALIZE((*eit)->v0->point, width, height));
+				glVertex2f(NORMALIZE((*eit)->v1->point, width, height));
+				glEnd();
+			}
 		}
-		glEnd();
+		glLineWidth(1);
 	}
-
-	glColor3f(1.0, 0.0, 0.0);
-
-	glPointSize(2.0f);
-	glBegin(GL_POINTS);
-	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
-		glVertex2f(NORMALIZE((*it)->point, width, height));
-	}
-	glEnd();
 
 	glFlush();
 	SwapBuffers();
@@ -142,6 +138,9 @@ void SimpleCanvas::Initialize() {
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glHint(GL_LINE_SMOOTH, GL_NICEST);
+	glEnable(GL_LINE_SMOOTH);
 
 	GenerateGeometry();
 
