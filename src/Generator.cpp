@@ -562,8 +562,65 @@ void Generator::assignMoisture() {
 	assignPolygonMoisture();
 };
 
-void Generator::assignBiomes() {
+//TODO: Abstract BiomePicker with different implementations?
+static Map::Biome getBiome(Map::Center p) {
+	if (p.ocean) {
+		return Map::OCEAN;
+	} else if (p.water) {
+		if (p.elevation < 0.1) {
+			return Map::MARSH;
+		}
+		if (p.elevation > 0.8) {
+			return Map::ICE;
+		}
+		return Map::LAKE;
+	} else if (p.coast) {
+		return Map::BEACH;
+	} else if (p.elevation > 0.8) {
+		if (p.moisture > 0.5) {
+			return Map::SNOW;
+		} else if (p.moisture > 0.33) {
+			return Map::TUNDRA;
+		} else if (p.moisture > 0.16) {
+			return Map::BARE;
+		} else {
+			return Map::SCORCHED;
+		}
+	} else if (p.elevation > 0.6) {
+		if (p.moisture > 0.66) {
+			return Map::TAIGA;
+		} else if (p.moisture > 0.33) {
+			return Map::SHRUBLAND;
+		} else {
+			return Map::TEMPERATE_DESERT;
+		}
+	} else if (p.elevation > 0.3) {
+		if (p.moisture > 0.83) {
+			return Map::TEMPERATE_RAIN_FOREST;
+		} else if (p.moisture > 0.5) {
+			return Map::TEMPERATE_DECIDUOUS_FOREST;
+		} else if (p.moisture > 0.16) {
+			return Map::GRASSLAND;
+		} else {
+			return Map::TEMPERATE_DESERT;
+		}
+	} else {
+		if (p.moisture > 0.66) {
+			return Map::TROPICAL_RAIN_FOREST;
+		} else if (p.moisture > 0.33) {
+			return Map::TROPICAL_SEASONAL_FOREST;
+		} else if (p.moisture > 0.16) {
+			return Map::GRASSLAND;
+		} else {
+			return Map::SUBTROPICAL_DESERT;
+		}
+	}
+}
 
+void Generator::assignBiomes() {
+	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+		(*it)->biome = getBiome(**it);
+	}
 };
 
 void Generator::start() {
