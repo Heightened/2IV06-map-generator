@@ -233,7 +233,7 @@ void Generator::addFeatures(MapShaper* mshape) {
 void Generator::assignElevations(MapShaper* mshape) {
 	assignElevationsCorner(mshape);
 	assignElevationsCoastAndLand();
-	//assignElevationsRedistribute();
+	assignElevationsRedistribute();
 	assignElevationsPolygons();
 
 	if (heightGraph) {
@@ -384,7 +384,7 @@ void Generator::assignElevationsRedistribute() {
 	float x;
 	float y;
 	for (std::vector<Map::Corner*>::iterator it = landCorners.begin(); it != landCorners.end(); it++) {
-		y = i / (landCorners.size() - 1);
+		y = (float)i / (landCorners.size() - 1);
 
 		x = sqrt(SCALE_FACTOR) - sqrt(SCALE_FACTOR * (1-y));
 
@@ -468,7 +468,7 @@ void Generator::createRivers() {
 		std::advance(it, std::rand() % corners.size());
 		Map::Corner *q = *it;
 
-		if (q->ocean || q->elevation < 9 || q->elevation > 27) {
+		if (q->ocean || q->elevation < 0.3 || q->elevation > 0.9) {
 			continue;
 		}
 
