@@ -5,6 +5,27 @@
 #include <glm/glm.hpp>
 
 namespace Map {
+	enum Biome {
+		OCEAN,
+		LAKE,
+		BEACH,
+		ICE,
+		MARSH,
+		SNOW,
+		TUNDRA,
+		BARE,
+		SCORCHED,
+		TAIGA,
+		SHRUBLAND,
+		TEMPERATE_DESERT,
+		TEMPERATE_RAIN_FOREST,
+		TEMPERATE_DECIDUOUS_FOREST,
+		GRASSLAND,
+		TROPICAL_RAIN_FOREST,
+		TROPICAL_SEASONAL_FOREST,
+		SUBTROPICAL_DESERT
+	};
+
 	class Center;
 	class Edge;
 	class Corner;
@@ -26,6 +47,8 @@ namespace Map {
 				elevation = 0.0f;
 
 				moisture = 0.0f;
+
+				biome = OCEAN;
 			}
 
 			inline bool operator< (const Center& other) const{
@@ -47,6 +70,8 @@ namespace Map {
 			std::set<Corner*> corners;
 
 			float moisture;
+
+			Biome biome;
 	};
 
 	class Corner {
