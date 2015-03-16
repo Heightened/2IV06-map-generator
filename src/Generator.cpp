@@ -6,6 +6,7 @@
 #include <algorithm>
 
 #include "HexPointSelector.h"
+#include "SquarePointSelector.h"
 #include "RandomPointSelector.h"
 #include "PoissonPointSelector.h"
 #include "SquareMapShaper.h"
@@ -52,6 +53,8 @@ PointSelector *Generator::select() {
 	switch (pointType) {
 	case POINTSELECTOR_HEX:
 		return new HexPointSelector(width, height);
+	case POINTSELECTOR_SQUARE:
+		return new SquarePointSelector(width, height);
 	case POINTSELECTOR_POISSON:
 		return new PoissonPointSelector(width, height);
 	case POINTSELECTOR_RANDOM:

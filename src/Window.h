@@ -21,6 +21,7 @@ class GeneratorFrame : public wxFrame {
 	void OnGenerate(wxCommandEvent& event);
 	void OnPointRandom(wxCommandEvent& event);
 	void OnPointHex(wxCommandEvent& event);
+	void OnPointSquare(wxCommandEvent& event);
 	void OnPointPoisson(wxCommandEvent& event);
 	void OnShapeRadial(wxCommandEvent& event);
 	void OnShapeSquare(wxCommandEvent& event);
@@ -49,5 +50,6 @@ enum {
 	ID_RadioMapShaperRadial = wxID_HIGHEST + 9,
 	ID_RadioMapShaperSquare = wxID_HIGHEST + 10,
 	ID_RadioMapShaperBlob = wxID_HIGHEST + 11,
-	ID_BtnExport = wxID_HIGHEST + 12
+	ID_BtnExport = wxID_HIGHEST + 12,
+	ID_RadioPointSelectorSquare = wxID_HIGHEST + 13
 };
