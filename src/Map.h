@@ -41,7 +41,7 @@ namespace Map {
 			float elevation;
 
 			std::set<Center*> neighbours;
-			std::vector<Edge> borders;
+			std::vector<Edge*> borders;
 			std::set<Corner*> corners;
 	};
 
@@ -77,7 +77,7 @@ namespace Map {
 			float elevation;
 
 			std::set<Center*> touches;
-			std::vector<Edge> protrudes;
+			std::vector<Edge*> protrudes;
 			std::set<Corner*> adjacent;
 
 			float moisture;
