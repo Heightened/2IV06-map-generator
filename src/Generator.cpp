@@ -32,6 +32,12 @@ struct CornerElevationComp {
 	}
 };
 
+struct CornerMoistureComp {
+	bool operator() (Map::Corner*& lhs, Map::Corner*& rhs) {
+		return lhs->moisture < rhs->moisture;
+	}
+};
+
 
 Generator::Generator(int _width, int _height, int _sampleSize): centers(), edges(), corners() {
 	width = _width;
@@ -486,15 +492,64 @@ void Generator::createRivers() {
 }
 
 void Generator::assignCornerMoisture() {
+	std::queue<Map::Corner*> queue;
+	float newMoisture;
 
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		if (((*it)->water || (*it)->river > 0) && !(*it)->ocean) {
+			(*it)->moisture = ((*it)->river > 0) ? std::min(3.0f, (0.2f * (*it)->river)) : 1.0f;
+			queue.push(*it);
+		} else {
+			(*it)->moisture = 0.0f;
+		}
+	}
+
+	Map::Corner *c;
+	while (!queue.empty()) {
+		c = queue.front();
+		queue.pop();
+
+		for (std::set<Map::Corner*>::iterator it = c->adjacent.begin(); it != c->adjacent.end(); it++) {
+			newMoisture = c->moisture * 0.9;
+			if (newMoisture > (*it)->moisture) {
+				(*it)->moisture = newMoisture;
+				queue.push(*it);
+			}
+		}
+	}
+
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		if ((*it)->ocean || (*it)->coast) {
+			(*it)->moisture = 1.0f;
+		}
+	}
 }
 
 void Generator::assignMoistureRedistribute() {
+	std::vector<Map::Corner*> landCorners;
 
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		if (!((*it)->ocean || (*it)->coast)) {
+			landCorners.push_back(*it);
+		}
+	}
+	std::sort(landCorners.begin(), landCorners.end(), CornerMoistureComp());
+
+	int i = 0;
+	for (std::vector<Map::Corner*>::iterator it = landCorners.begin(); it != landCorners.end(); it++) {
+		(*it)->moisture = (float) i / (landCorners.size() - 1);
+		i++;
+	}
 }
 
 void Generator::assignPolygonMoisture() {
-
+	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+		float sum = 0.0f;
+		for (std::set<Map::Corner*>::iterator cit = (*it)->corners.begin(); cit != (*it)->corners.end(); cit++) {
+			sum += (*cit)->moisture;
+		}
+		(*it)->moisture = sum/(*it)->corners.size();
+	}
 }
 
 

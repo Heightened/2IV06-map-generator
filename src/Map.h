@@ -24,6 +24,8 @@ namespace Map {
 				border = false;
 
 				elevation = 0.0f;
+
+				moisture = 0.0f;
 			}
 
 			inline bool operator< (const Center& other) const{
@@ -43,6 +45,8 @@ namespace Map {
 			std::set<Center*> neighbours;
 			std::vector<Edge*> borders;
 			std::set<Corner*> corners;
+
+			float moisture;
 	};
 
 	class Corner {
