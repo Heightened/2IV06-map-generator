@@ -65,6 +65,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	sizer->Add(new wxStaticText(toolboxPanel, -1, "Point selector:", wxDefaultPosition, wxDefaultSize));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorRandom, "Random", wxDefaultPosition, wxDefaultSize, wxRB_GROUP));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorHex, "Hexagonal"));
+	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorSquare, "Square"));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorPoisson, "Poisson"));
 
 	sizer->Add(new wxButton(toolboxPanel, ID_BtnGenerate, "Generate Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "generateButton"), 0, 0, 0);
@@ -157,6 +158,10 @@ void GeneratorFrame::OnPointHex(wxCommandEvent& event) {
 	gen->setPointSelectorType(POINTSELECTOR_HEX);
 }
 
+void GeneratorFrame::OnPointSquare(wxCommandEvent& event) {
+	gen->setPointSelectorType(POINTSELECTOR_SQUARE);
+}
+
 void GeneratorFrame::OnPointPoisson(wxCommandEvent& event) {
 	gen->setPointSelectorType(POINTSELECTOR_POISSON);
 }
@@ -184,6 +189,7 @@ wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
 	EVT_BUTTON(ID_BtnExport, GeneratorFrame::OnExportMap)
 	EVT_RADIOBUTTON(ID_RadioPointSelectorRandom, GeneratorFrame::OnPointRandom)
 	EVT_RADIOBUTTON(ID_RadioPointSelectorHex, GeneratorFrame::OnPointHex)
+	EVT_RADIOBUTTON(ID_RadioPointSelectorSquare, GeneratorFrame::OnPointSquare)
 	EVT_RADIOBUTTON(ID_RadioPointSelectorPoisson, GeneratorFrame::OnPointPoisson)
 	EVT_RADIOBUTTON(ID_RadioMapShaperRadial, GeneratorFrame::OnShapeRadial)
 	EVT_RADIOBUTTON(ID_RadioMapShaperSquare, GeneratorFrame::OnShapeSquare)
