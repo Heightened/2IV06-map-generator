@@ -147,7 +147,8 @@ void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
 		alpha = 1.0f - ((*it)->elevation - minElevation)/(maxElevation-minElevation)*0.7f;
 
-		setBiome((*it)->biome, alpha);
+		// Alpha values for height don't really work well with biomes, so disable them for now
+		setBiome((*it)->biome, 1.0f);
 		std::vector<glm::vec2> cornerPoints;
 		for (std::set<Map::Corner*>::iterator eit = (*it)->corners.begin(); eit != (*it)->corners.end(); eit++) {
 			cornerPoints.push_back((*eit)->point);
