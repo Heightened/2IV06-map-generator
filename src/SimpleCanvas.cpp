@@ -10,6 +10,7 @@ wxBEGIN_EVENT_TABLE(SimpleCanvas, wxGLCanvas)
 wxEND_EVENT_TABLE()
 
 #define NORMALIZE(point, width, height) (point.x/width)*2 - 1.0f, (point.y/height)*2 - 1.0f
+#define rgb(r,g,b) r/255.0f, g/255.0f, b/255.0f
 
 class CounterClockwiseCompare {
 	glm::vec2 center;
@@ -45,6 +46,65 @@ class CounterClockwiseCompare {
 			return d1 < d2;
 		}
 };
+
+static void setBiome(Map::Biome b, float alpha) {
+	switch(b) {
+	case Map::LAKE:
+		glColor4f(rgb(91, 132, 173), alpha);
+		break;
+	case Map::BEACH:
+		glColor4f(rgb(172,159,139), alpha);
+		break;
+	case Map::ICE:
+		glColor4f(rgb(222, 230, 245), alpha);
+		break;
+	case Map::MARSH:
+		glColor4f(rgb(64, 108, 86), alpha);
+		break;
+	case Map::SNOW:
+		glColor4f(rgb(248, 248, 248), alpha);
+		break;
+	case Map::TUNDRA:
+		glColor4f(rgb(221, 221, 187), alpha);
+		break;
+	case Map::BARE:
+		glColor4f(rgb(187, 187, 187), alpha);
+		break;
+	case Map::SCORCHED:
+		glColor4f(rgb(153, 153, 153), alpha);
+		break;
+	case Map::TAIGA:
+		glColor4f(rgb(204, 212, 187), alpha);
+		break;
+	case Map::SHRUBLAND:
+		glColor4f(rgb(196, 204, 187), alpha);
+		break;
+	case Map::TEMPERATE_DESERT:
+		glColor4f(rgb(228, 232, 202), alpha);
+		break;
+	case Map::TEMPERATE_RAIN_FOREST:
+		glColor4f(rgb(164, 196, 168), alpha);
+		break;
+	case Map::TEMPERATE_DECIDUOUS_FOREST:
+		glColor4f(rgb(180, 201, 169), alpha);
+		break;
+	case Map::GRASSLAND:
+		glColor4f(rgb(196, 212, 170), alpha);
+		break;
+	case Map::TROPICAL_RAIN_FOREST:
+		glColor4f(rgb(156, 187, 169), alpha);
+		break;
+	case Map::TROPICAL_SEASONAL_FOREST:
+		glColor4f(rgb(169, 204, 164), alpha);
+		break;
+	case Map::SUBTROPICAL_DESERT:
+		glColor4f(rgb(233, 221, 199), alpha);
+		break;
+	case Map::OCEAN:
+	default:
+		glColor4f(rgb(54, 54, 97), alpha);
+	}
+}
 
 void SimpleCanvas::GenerateGeometry() {
 	centers = gen->getCenters();
@@ -87,13 +147,7 @@ void SimpleCanvas::Paint(wxPaintEvent& WXUNUSED(event)) {
 	for (std::vector<Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
 		alpha = 1.0f - ((*it)->elevation - minElevation)/(maxElevation-minElevation)*0.7f;
 
-		glColor4f(179/255.0f, 166/255.0f, 146/255.0f, alpha);
-		if ((*it)->water) {
-			glColor4f(91/255.0f, 132/255.0f, 173/255.0f, alpha);
-		}
-		if ((*it)->ocean) {
-			glColor4f(54/255.0f, 54/255.0f, 97/255.0f, alpha);
-		}
+		setBiome((*it)->biome, alpha);
 		std::vector<glm::vec2> cornerPoints;
 		for (std::set<Map::Corner*>::iterator eit = (*it)->corners.begin(); eit != (*it)->corners.end(); eit++) {
 			cornerPoints.push_back((*eit)->point);
