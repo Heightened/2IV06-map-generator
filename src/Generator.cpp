@@ -233,7 +233,7 @@ void Generator::addFeatures(MapShaper* mshape) {
 void Generator::assignElevations(MapShaper* mshape) {
 	assignElevationsCorner(mshape);
 	assignElevationsCoastAndLand();
-	//assignElevationsRedistribute();
+	assignElevationsRedistribute();
 	assignElevationsPolygons();
 
 	if (heightGraph) {
@@ -408,8 +408,103 @@ void Generator::assignElevationsPolygons() {
 	}
 }
 
-void Generator::assignMoisture() {
+void Generator::calculateDownslopes() {
+	Map::Corner *r;
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		r = *it;
+		for (std::set<Map::Corner*>::iterator ait = (*it)->adjacent.begin(); ait != (*it)->adjacent.end(); ait++) {
+			if ((*it)->elevation <= r->elevation) {
+				r = *it;
+			}
+		}
+		(*it)->downslope = r;
+	}
+}
 
+void Generator::calculateWatersheds() {
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		(*it)->watershed = *it;
+		if (!(*it)->ocean && !(*it)->coast) {
+			(*it)->watershed = (*it)->downslope;
+		}
+	}
+
+	for (int i = 0; i < 100; i++) {
+		bool changed = false;
+		Map::Corner *r;
+
+		for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+			if (!((*it)->ocean || (*it)->coast || (*it)->watershed->coast)) {
+				r = (*it)->downslope->watershed;
+				if (!r->ocean) {
+					(*it)->watershed = r;
+					changed = true;
+				}
+			}
+		}
+
+		if (!changed) {
+			break;
+		}
+	}
+
+	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
+		(*it)->watershed->watershed_size += 1;
+	}
+}
+
+static Map::Edge* lookupEdgeFromCorner(Map::Corner* q, Map::Corner* s) {
+	for (std::vector<Map::Edge>::iterator it = q->protrudes.begin(); it != q->protrudes.end(); it++) {
+		if (it->v0 == s || it->v1 == s) {
+			return &(*it);
+		}
+	}
+	return new Map::Edge(-1, NULL, NULL, NULL, NULL, glm::vec2(-1, -1));
+}
+
+void Generator::createRivers() {
+	for (int i = 0; i < width/2; i++) {
+		std::vector<Map::Corner*>::iterator it = corners.begin();
+		std::advance(it, std::rand() % corners.size());
+		Map::Corner *q = *it;
+
+		if (q->ocean || q->elevation < 0.3 || q->elevation > 0.9) {
+			continue;
+		}
+
+		while (!q->coast) {
+			if (q == q->downslope) {
+				break;
+			}
+			Map::Edge* e = lookupEdgeFromCorner(q, q->downslope);
+			e->river += 1;
+			q->river += 1;
+			q->downslope->river += 1;
+			q = q->downslope;
+		}
+	}
+}
+
+void Generator::assignCornerMoisture() {
+
+}
+
+void Generator::assignMoistureRedistribute() {
+
+}
+
+void Generator::assignPolygonMoisture() {
+
+}
+
+
+void Generator::assignMoisture() {
+	calculateDownslopes();
+	calculateWatersheds();
+	createRivers();
+	assignCornerMoisture();
+	assignMoistureRedistribute();
+	assignPolygonMoisture();
 };
 
 void Generator::assignBiomes() {

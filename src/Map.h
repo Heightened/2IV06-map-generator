@@ -56,6 +56,10 @@ namespace Map {
 				border = false;
 
 				elevation = 0.0f;
+
+				moisture = 0.0f;
+				river = 0;
+				watershed_size = 0;
 			}
 
 			inline bool operator< (const Corner& other) const{
@@ -75,6 +79,12 @@ namespace Map {
 			std::set<Center*> touches;
 			std::vector<Edge> protrudes;
 			std::set<Corner*> adjacent;
+
+			float moisture;
+			int river;
+			Corner* downslope;
+			Corner* watershed;
+			int watershed_size;
 	};
 
 	class Edge {
@@ -86,6 +96,8 @@ namespace Map {
 				d1 = _d1;
 				v0 = _v0;
 				v1 = _v1;
+
+				river = 0;
 			}
 
 			inline bool operator< (const Edge& other) const{
@@ -98,6 +110,8 @@ namespace Map {
 			Center *d1;
 			Corner *v0;
 			Corner *v1;
+
+			int river;
 
 			glm::vec2 midway;
 	};
