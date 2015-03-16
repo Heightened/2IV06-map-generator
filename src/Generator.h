@@ -39,6 +39,8 @@ class Generator {
 	int height;
 	// The number of samples to use to generate the terrain
 	int sampleSize;
+	// The number of river springs to try to generate
+	unsigned long spring_count;
 
 	// The point selector to use
 	PointSelectorType pointType;
@@ -140,6 +142,10 @@ class Generator {
 		 */
 		void setHeightGraph(Graph *g) {
 			heightGraph = g;
+		}
+
+		void setSpringCount(unsigned long count) {
+			spring_count = count;
 		}
 
 		std::vector<Map::Center*> getCenters() {

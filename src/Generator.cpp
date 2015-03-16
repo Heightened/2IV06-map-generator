@@ -45,6 +45,8 @@ Generator::Generator(int _width, int _height, int _sampleSize): centers(), edges
 	height = _height;
 	sampleSize = _sampleSize;
 
+	spring_count = width/6;
+
 	pointType = POINTSELECTOR_RANDOM;
 	shaperType = MAPSHAPER_RADIAL;
 };
@@ -472,7 +474,7 @@ static Map::Edge* lookupEdgeFromCorner(Map::Corner* q, Map::Corner* s) {
 }
 
 void Generator::createRivers() {
-	for (int i = 0; i < width/4; i++) {
+	for (int i = 0; i < spring_count; i++) {
 		std::vector<Map::Corner*>::iterator it = corners.begin();
 		std::advance(it, std::rand() % corners.size());
 		Map::Corner *q = *it;
