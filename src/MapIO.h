@@ -15,6 +15,7 @@ namespace IO {
 		bool border;
 		float elevation;
 		float moisture;
+		Map::Biome biome;
 	};
 
 	struct Corner {

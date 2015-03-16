@@ -28,6 +28,7 @@ void IO::exportMap(FILE *file, std::vector<Map::Center*> centers) {
 		io_centers[(*it)->index].border = (*it)->border;
 		io_centers[(*it)->index].elevation = (*it)->elevation;
 		io_centers[(*it)->index].moisture = (*it)->moisture;
+		io_centers[(*it)->index].biome = (*it)->biome;
 
 		for (std::set<Map::Center*>::iterator cit = (*it)->neighbours.begin(); cit != (*it)->neighbours.end(); cit++) {
 			IO::Neighbour_rel n;
@@ -241,6 +242,7 @@ std::vector<Map::Center*> IO::importMap(FILE *file) {
 		c->border = io_centers[i].border;
 		c->elevation = io_centers[i].elevation;
 		c->moisture = io_centers[i].moisture;
+		c->biome = io_centers[i].biome;
 
 		centers.push_back(c);
 	}
