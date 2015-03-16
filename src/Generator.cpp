@@ -233,7 +233,7 @@ void Generator::addFeatures(MapShaper* mshape) {
 void Generator::assignElevations(MapShaper* mshape) {
 	assignElevationsCorner(mshape);
 	assignElevationsCoastAndLand();
-	assignElevationsRedistribute();
+	//assignElevationsRedistribute();
 	assignElevationsPolygons();
 
 	if (heightGraph) {
@@ -413,8 +413,8 @@ void Generator::calculateDownslopes() {
 	for (std::vector<Map::Corner*>::iterator it = corners.begin(); it != corners.end(); it++) {
 		r = *it;
 		for (std::set<Map::Corner*>::iterator ait = (*it)->adjacent.begin(); ait != (*it)->adjacent.end(); ait++) {
-			if ((*it)->elevation <= r->elevation) {
-				r = *it;
+			if ((*ait)->elevation <= r->elevation) {
+				r = *ait;
 			}
 		}
 		(*it)->downslope = r;
@@ -463,12 +463,12 @@ static Map::Edge* lookupEdgeFromCorner(Map::Corner* q, Map::Corner* s) {
 }
 
 void Generator::createRivers() {
-	for (int i = 0; i < width/2; i++) {
+	for (int i = 0; i < width/4; i++) {
 		std::vector<Map::Corner*>::iterator it = corners.begin();
 		std::advance(it, std::rand() % corners.size());
 		Map::Corner *q = *it;
 
-		if (q->ocean || q->elevation < 0.3 || q->elevation > 0.9) {
+		if (q->ocean || q->elevation < 9 || q->elevation > 27) {
 			continue;
 		}
 
