@@ -3,6 +3,7 @@
 //}
 
 #include "Window.h"
+#include <wx/valnum.h>
 
 #include "MapIO.h"
 
@@ -67,6 +68,12 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorHex, "Hexagonal"));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorSquare, "Square"));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioPointSelectorPoisson, "Poisson"));
+
+	//Springs
+	sizer->Add(new wxStaticText(toolboxPanel, -1, "Number of springs:", wxDefaultPosition, wxDefaultSize));
+	wxIntegerValidator<unsigned long> val(NULL);
+	val.SetRange(1, 50001);
+	sizer->Add(new wxTextCtrl(toolboxPanel, ID_TextSprings, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, val));
 
 	sizer->Add(new wxButton(toolboxPanel, ID_BtnGenerate, "Generate Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "generateButton"), 0, 0, 0);
 	sizer->Add(new wxButton(toolboxPanel, ID_BtnExport, "Export Map", wxDefaultPosition, wxSize(120,30), wxSHAPED, wxDefaultValidator, "exportButton"), 0, 0, 0);
@@ -178,6 +185,11 @@ void GeneratorFrame::OnShapeBlob(wxCommandEvent& event) {
 	gen->setMapShaperType(MAPSHAPER_BLOB);
 }
 
+void GeneratorFrame::OnSpringChange(wxCommandEvent& event) {
+	gen->setSpringCount(atol(event.GetString().c_str().AsChar()));
+}
+
+
 wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
     EVT_MENU(ID_New,   GeneratorFrame::OnNew)
 	EVT_MENU(ID_Open,   GeneratorFrame::OnOpen)
@@ -194,6 +206,7 @@ wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
 	EVT_RADIOBUTTON(ID_RadioMapShaperRadial, GeneratorFrame::OnShapeRadial)
 	EVT_RADIOBUTTON(ID_RadioMapShaperSquare, GeneratorFrame::OnShapeSquare)
 	EVT_RADIOBUTTON(ID_RadioMapShaperBlob, GeneratorFrame::OnShapeBlob)
+	EVT_TEXT(ID_TextSprings, GeneratorFrame::OnSpringChange)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(GeneratorApp);
