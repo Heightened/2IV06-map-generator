@@ -27,6 +27,7 @@ void IO::exportMap(FILE *file, std::vector<Map::Center*> centers) {
 		io_centers[(*it)->index].coast = (*it)->coast;
 		io_centers[(*it)->index].border = (*it)->border;
 		io_centers[(*it)->index].elevation = (*it)->elevation;
+		io_centers[(*it)->index].moisture = (*it)->moisture;
 
 		for (std::set<Map::Center*>::iterator cit = (*it)->neighbours.begin(); cit != (*it)->neighbours.end(); cit++) {
 			IO::Neighbour_rel n;
@@ -64,6 +65,10 @@ void IO::exportMap(FILE *file, std::vector<Map::Center*> centers) {
 		io_corners[(*it)->index].coast = (*it)->coast;
 		io_corners[(*it)->index].border = (*it)->border;
 		io_corners[(*it)->index].elevation = (*it)->elevation;
+		io_corners[(*it)->index].moisture = (*it)->moisture;
+		io_corners[(*it)->index].watershed_size = (*it)->watershed_size;
+		io_corners[(*it)->index].corner_downslope = (*it)->downslope->index;
+		io_corners[(*it)->index].corner_watershed = (*it)->watershed->index;
 
 		for (std::set<Map::Center*>::iterator cit = (*it)->touches.begin(); cit != (*it)->touches.end(); cit++) {
 			IO::Touches_rel t;
@@ -96,6 +101,7 @@ void IO::exportMap(FILE *file, std::vector<Map::Center*> centers) {
 		io_edges[(*it)->index].corner_v0 = (*it)->v0->index;
 		io_edges[(*it)->index].corner_v1 = (*it)->v1->index;
 		io_edges[(*it)->index].midway = (*it)->midway;
+		io_edges[(*it)->index].river = (*it)->river;
 	}
 
 	// Make arrays from relations
@@ -234,6 +240,7 @@ std::vector<Map::Center*> IO::importMap(FILE *file) {
 		c->coast = io_centers[i].coast;
 		c->border = io_centers[i].border;
 		c->elevation = io_centers[i].elevation;
+		c->moisture = io_centers[i].moisture;
 
 		centers.push_back(c);
 	}
@@ -245,6 +252,8 @@ std::vector<Map::Center*> IO::importMap(FILE *file) {
 		c->coast = io_corners[i].coast;
 		c->border = io_corners[i].border;
 		c->elevation = io_corners[i].elevation;
+		c->moisture = io_corners[i].moisture;
+		c->watershed_size = io_corners[i].watershed_size;
 
 		corners.push_back(c);
 	}
@@ -258,7 +267,14 @@ std::vector<Map::Center*> IO::importMap(FILE *file) {
 			cornerFromId(corners, io_edges[i].corner_v1),
 			io_edges[i].midway
 		);
+		e->river = io_edges[i].river;
 		edges.push_back(e);
+	}
+
+	//Rebuild one to one relations
+	for (int i = 0; i < cornercount; i++) {
+		cornerFromId(corners, io_corners[i].index)->downslope = cornerFromId(corners, io_corners[i].corner_downslope);
+		cornerFromId(corners, io_corners[i].index)->watershed = cornerFromId(corners, io_corners[i].corner_watershed);
 	}
 
 	//Rebuild relations
