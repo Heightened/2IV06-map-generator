@@ -167,7 +167,7 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 		glm::vec2 midway((v0x + v1x) / 2, (v0y + v1y) / 2);
 
 		//Edges point to corners, edges point to centers
-		Map::Edge edge(edges.size(),
+		Map::Edge* edge = new Map::Edge(edges.size(),
 			   centerMap[glm::vec2(d0x, d0y)],
 			   centerMap[glm::vec2(d1x, d1y)],
 			   makeCorner(cornerMap, corners, glm::vec2(v0x, v0y)),
@@ -175,30 +175,30 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 			   midway);
 
 		//Centers point to edges, corners point to edges
-		edge.d0->borders.push_back(edge);
-		edge.d1->borders.push_back(edge);
-		edge.v0->protrudes.push_back(edge);
-		edge.v1->protrudes.push_back(edge);
+		edge->d0->borders.push_back(edge);
+		edge->d1->borders.push_back(edge);
+		edge->v0->protrudes.push_back(edge);
+		edge->v1->protrudes.push_back(edge);
 
 		//Centers point to centers
-		edge.d0->neighbours.insert(edge.d1);
-		edge.d1->neighbours.insert(edge.d0);
+		edge->d0->neighbours.insert(edge->d1);
+		edge->d1->neighbours.insert(edge->d0);
 
 		//Corners point to corners
-		edge.v0->adjacent.insert(edge.v1);
-		edge.v1->adjacent.insert(edge.v0);
+		edge->v0->adjacent.insert(edge->v1);
+		edge->v1->adjacent.insert(edge->v0);
 
 		//Centers point to corners
-		edge.d0->corners.insert(edge.v0);
-		edge.d0->corners.insert(edge.v1);
-		edge.d1->corners.insert(edge.v0);
-		edge.d1->corners.insert(edge.v1);
+		edge->d0->corners.insert(edge->v0);
+		edge->d0->corners.insert(edge->v1);
+		edge->d1->corners.insert(edge->v0);
+		edge->d1->corners.insert(edge->v1);
 
 		//Corners point to centers
-		edge.v0->touches.insert(edge.d0);
-		edge.v0->touches.insert(edge.d1);
-		edge.v1->touches.insert(edge.d0);
-		edge.v1->touches.insert(edge.d1);
+		edge->v0->touches.insert(edge->d0);
+		edge->v0->touches.insert(edge->d1);
+		edge->v1->touches.insert(edge->d0);
+		edge->v1->touches.insert(edge->d1);
 
 		edges.push_back(edge);
 	}
@@ -215,8 +215,8 @@ void Generator::buildGraph(std::vector<glm::vec2> points) {
 		}
 
 		// Add edges to graph
-		for (std::vector<Map::Edge>::iterator it = edges.begin(); it != edges.end(); it++) {
-			polygonGraph->AddEdge(it->v0->point, it->v1->point);
+		for (std::vector<Map::Edge*>::iterator it = edges.begin(); it != edges.end(); it++) {
+			polygonGraph->AddEdge((*it)->v0->point, (*it)->v1->point);
 		}
 	}
 
@@ -243,8 +243,8 @@ void Generator::assignElevations(MapShaper* mshape) {
 		}
 
 		// Add edges to graph
-		for (std::vector<Map::Edge>::iterator it = edges.begin(); it != edges.end(); it++) {
-			heightGraph->AddEdge(glm::vec3(it->v0->point.x, it->v0->point.y, it->v0->elevation), glm::vec3(it->v1->point.x, it->v1->point.y, it->v1->elevation));
+		for (std::vector<Map::Edge*>::iterator it = edges.begin(); it != edges.end(); it++) {
+			heightGraph->AddEdge(glm::vec3((*it)->v0->point.x, (*it)->v0->point.y, (*it)->v0->elevation), glm::vec3((*it)->v1->point.x, (*it)->v1->point.y, (*it)->v1->elevation));
 		}
 	}
 };
@@ -454,9 +454,9 @@ void Generator::calculateWatersheds() {
 }
 
 static Map::Edge* lookupEdgeFromCorner(Map::Corner* q, Map::Corner* s) {
-	for (std::vector<Map::Edge>::iterator it = q->protrudes.begin(); it != q->protrudes.end(); it++) {
-		if (it->v0 == s || it->v1 == s) {
-			return &(*it);
+	for (std::vector<Map::Edge*>::iterator it = q->protrudes.begin(); it != q->protrudes.end(); it++) {
+		if ((*it)->v0 == s || (*it)->v1 == s) {
+			return *it;
 		}
 	}
 	return new Map::Edge(-1, NULL, NULL, NULL, NULL, glm::vec2(-1, -1));

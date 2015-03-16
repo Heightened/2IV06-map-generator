@@ -51,7 +51,7 @@ class Generator {
 
 	// Data structures representing the map
 	std::vector<Map::Center*> centers;
-	std::vector<Map::Edge> edges;
+	std::vector<Map::Edge*> edges;
 	std::vector<Map::Corner*> corners;
 
 	MapShaper *shape();

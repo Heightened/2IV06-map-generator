@@ -4,7 +4,7 @@
 
 #include "wx/log.h"
 
-typedef std::vector<Map::Edge, std::allocator<Map::Edge> > BORDERLIST;
+typedef std::vector<Map::Edge*, std::allocator<Map::Edge*> > BORDERLIST;
 typedef std::set<Map::Corner*, std::less<Map::Corner*>, std::allocator<Map::Corner*> > CORNERSET;
 
 MapSurfaceCellVertices::MapSurfaceCellVertices(Map::Center* center, int size) : Attribute(size * 3 * 3) {
@@ -16,8 +16,8 @@ MapSurfaceCellVertices::MapSurfaceCellVertices(Map::Center* center, int size) : 
 	for(BORDERLIST::iterator it = center->borders.begin(); it != center->borders.end(); ++it) {
 		if (&(*it) == NULL) continue;
 
-		glm::vec3 a((*it).v0->point, (*it).v0->elevation);
-		glm::vec3 b((*it).v1->point, (*it).v1->elevation);
+		glm::vec3 a((*it)->v0->point, (*it)->v0->elevation);
+		glm::vec3 b((*it)->v1->point, (*it)->v1->elevation);
 		
 		//The correctly ordered face will have a normal with positive z
 		if (glm::cross(a-c, b-c).z < 0) {
