@@ -10,6 +10,7 @@
 #include "RandomPointSelector.h"
 #include "PoissonPointSelector.h"
 #include "SquareMapShaper.h"
+#include "RoundMapShaper.h"
 #include "RadialMapShaper.h"
 #include "BlobMapShaper.h"
 #include "vendor/VoronoiDiagramGenerator.h"
@@ -67,6 +68,8 @@ PointSelector *Generator::select() {
 
 MapShaper *Generator::shape() {
 	switch (shaperType) {
+	case MAPSHAPER_ROUND:
+		return new RoundMapShaper();
 	case MAPSHAPER_SQUARE:
 		return new SquareMapShaper();
 	case MAPSHAPER_BLOB:

@@ -26,7 +26,8 @@ enum PointSelectorType {
 enum MapShaperType {
 	MAPSHAPER_RADIAL,
 	MAPSHAPER_SQUARE,
-	MAPSHAPER_BLOB
+	MAPSHAPER_BLOB,
+	MAPSHAPER_ROUND
 };
 
 /**
