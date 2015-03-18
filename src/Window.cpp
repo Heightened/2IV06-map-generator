@@ -60,6 +60,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 	sizer->Add(new wxStaticText(toolboxPanel, -1, "Map shaper:", wxDefaultPosition, wxDefaultSize));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioMapShaperRadial, "Radial", wxDefaultPosition, wxDefaultSize, wxRB_GROUP));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioMapShaperSquare, "Square"));
+	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioMapShaperRound, "Round"));
 	sizer->Add(new wxRadioButton(toolboxPanel, ID_RadioMapShaperBlob, "RedBlobGames"));
 
 	//Point selector
@@ -185,6 +186,10 @@ void GeneratorFrame::OnShapeBlob(wxCommandEvent& event) {
 	gen->setMapShaperType(MAPSHAPER_BLOB);
 }
 
+void GeneratorFrame::OnShapeRound(wxCommandEvent& event) {
+	gen->setMapShaperType(MAPSHAPER_ROUND);
+}
+
 void GeneratorFrame::OnSpringChange(wxCommandEvent& event) {
 	gen->setSpringCount(atol(event.GetString().c_str().AsChar()));
 }
@@ -206,6 +211,7 @@ wxBEGIN_EVENT_TABLE(GeneratorFrame, wxFrame)
 	EVT_RADIOBUTTON(ID_RadioMapShaperRadial, GeneratorFrame::OnShapeRadial)
 	EVT_RADIOBUTTON(ID_RadioMapShaperSquare, GeneratorFrame::OnShapeSquare)
 	EVT_RADIOBUTTON(ID_RadioMapShaperBlob, GeneratorFrame::OnShapeBlob)
+	EVT_RADIOBUTTON(ID_RadioMapShaperRound, GeneratorFrame::OnShapeRound)
 	EVT_TEXT(ID_TextSprings, GeneratorFrame::OnSpringChange)
 wxEND_EVENT_TABLE()
 
