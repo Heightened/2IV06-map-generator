@@ -1,5 +1,7 @@
 #include <cstdio>
+#include <ctime>
 #include <algorithm>
+#include <map>
 
 #include "MapIO.h"
 
@@ -228,9 +230,9 @@ std::vector<Map::Center*> IO::importMap(FILE *file) {
 	IO::Adjacent_rel* adjacent_a = (IO::Adjacent_rel*) malloc(adjacent_count*sizeof(IO::Adjacent_rel));
 	fread(adjacent_a, sizeof(IO::Adjacent_rel), adjacent_count, file);
 
-	std::vector<Map::Center*> centers;
-	std::vector<Map::Corner*> corners;
-	std::vector<Map::Edge*> edges;
+	std::map<int, Map::Center*> centers;
+	std::map<int, Map::Corner*> corners;
+	std::map<int, Map::Edge*> edges;
 
 	//Rebuild Map data structures
 
@@ -244,7 +246,7 @@ std::vector<Map::Center*> IO::importMap(FILE *file) {
 		c->moisture = io_centers[i].moisture;
 		c->biome = io_centers[i].biome;
 
-		centers.push_back(c);
+		centers.insert(std::pair<int, Map::Center*>(io_centers[i].index, c));
 	}
 
 	for (int i = 0; i < cornercount; i++) {
@@ -257,26 +259,26 @@ std::vector<Map::Center*> IO::importMap(FILE *file) {
 		c->moisture = io_corners[i].moisture;
 		c->watershed_size = io_corners[i].watershed_size;
 
-		corners.push_back(c);
+		corners.insert(std::pair<int, Map::Corner*>(io_corners[i].index, c));
 	}
 
 	for (int i = 0; i < edgecount; i++) {
 		Map::Edge *e = new Map::Edge(
 			io_edges[i].index,
-			centerFromId(centers, io_edges[i].center_d0),
-			centerFromId(centers, io_edges[i].center_d1),
-			cornerFromId(corners, io_edges[i].corner_v0),
-			cornerFromId(corners, io_edges[i].corner_v1),
+			centers[io_edges[i].center_d0],
+			centers[io_edges[i].center_d1],
+			corners[io_edges[i].corner_v0],
+			corners[io_edges[i].corner_v1],
 			io_edges[i].midway
 		);
 		e->river = io_edges[i].river;
-		edges.push_back(e);
+		edges.insert(std::pair<int, Map::Edge*>(io_edges[i].index, e));
 	}
 
 	//Rebuild one to one relations
 	for (int i = 0; i < cornercount; i++) {
-		cornerFromId(corners, io_corners[i].index)->downslope = cornerFromId(corners, io_corners[i].corner_downslope);
-		cornerFromId(corners, io_corners[i].index)->watershed = cornerFromId(corners, io_corners[i].corner_watershed);
+		corners[io_corners[i].index]->downslope = corners[io_corners[i].corner_downslope];
+		corners[io_corners[i].index]->watershed = corners[corners, io_corners[i].corner_watershed];
 	}
 
 	//Rebuild relations
@@ -285,35 +287,41 @@ std::vector<Map::Center*> IO::importMap(FILE *file) {
 	//Then we add the in node to the relation structure on the out node
 
 	for (int i = 0; i < neighbours_count; i++) {
-		Map::Center* out = centerFromId(centers, neighbours_a[i].center_out);
-		if (out != NULL) out->neighbours.insert(centerFromId(centers, neighbours_a[i].center_in));
+		Map::Center* out = centers[neighbours_a[i].center_out];
+		if (out != NULL) out->neighbours.insert(centers[neighbours_a[i].center_in]);
 	}
 
 	for (int i = 0; i < borders_count; i++) {
-		Map::Center* out = centerFromId(centers, borders_a[i].center_out);
-		if (out != NULL) out->borders.push_back(edgeFromId(edges, borders_a[i].edge_in));
+		Map::Center* out = centers[borders_a[i].center_out];
+		if (out != NULL) out->borders.push_back(edges[borders_a[i].edge_in]);
 	}
 
 	for (int i = 0; i < corner_rel_count; i++) {
-		Map::Center* out = centerFromId(centers, corner_rel_a[i].center_out);
-		if (out != NULL) out->corners.insert(cornerFromId(corners, corner_rel_a[i].corner_in));
+		Map::Center* out = centers[corner_rel_a[i].center_out];
+		if (out != NULL) out->corners.insert(corners[corner_rel_a[i].corner_in]);
 	}
 
 	for (int i = 0; i < touches_count; i++) {
-		Map::Corner* out = cornerFromId(corners, touches_a[i].corner_out);
-		if (out != NULL) out->touches.insert(centerFromId(centers, touches_a[i].center_in));
+		Map::Corner* out = corners[touches_a[i].corner_out];
+		if (out != NULL) out->touches.insert(centers[touches_a[i].center_in]);
 	}
 
 	for (int i = 0; i < protrudes_count; i++) {
-		Map::Corner* out = cornerFromId(corners, protrudes_a[i].corner_out);
-		if (out != NULL) out->protrudes.push_back(edgeFromId(edges, protrudes_a[i].edge_in));
+		Map::Corner* out = corners[protrudes_a[i].corner_out];
+		if (out != NULL) out->protrudes.push_back(edges[protrudes_a[i].edge_in]);
 	}
 
 	for (int i = 0; i < adjacent_count; i++) {
-		Map::Corner* out = cornerFromId(corners, adjacent_a[i].corner_out);
-		if (out != NULL) out->adjacent.insert(cornerFromId(corners, adjacent_a[i].corner_in));
+		Map::Corner* out = corners[adjacent_a[i].corner_out];
+		if (out != NULL) out->adjacent.insert(corners[adjacent_a[i].corner_in]);
 	}
 
-	return centers;
+	std::vector<Map::Center*> ret;
+
+	for (std::map<int, Map::Center*>::iterator it = centers.begin(); it != centers.end(); it++) {
+		ret.push_back(&(*it->second));
+	}
+
+	return ret;
 };
 
