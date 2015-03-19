@@ -13,6 +13,7 @@
 #include "RoundMapShaper.h"
 #include "RadialMapShaper.h"
 #include "BlobMapShaper.h"
+#include "CrescentMapShaper.h"
 #include "vendor/VoronoiDiagramGenerator.h"
 
 #define GENERATOR_MIN_DISTANCE 1.0e-6
@@ -74,6 +75,8 @@ MapShaper *Generator::shape() {
 		return new SquareMapShaper();
 	case MAPSHAPER_BLOB:
 		return new BlobMapShaper();
+	case MAPSHAPER_CRESCENT:
+		return new CrescentMapShaper();
 	case MAPSHAPER_RADIAL:
 	default:
 		return new RadialMapShaper();
