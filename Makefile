@@ -13,7 +13,7 @@ LIBS = $(WX_LIBS) -lGL -lGLU -lglew
 
 PROGRAM = $(BINDIR)/generator
 
-OBJ_NAMES = Canvas MapSurfaceVisualisation MapIO SimpleCanvas Window Objects Island HexPointSelector SquarePointSelector RandomPointSelector PoissonPointSelector RadialMapShaper RoundMapShaper SquareMapShaper BlobMapShaper GraphVisualisation Generator
+OBJ_NAMES = Canvas MapSurfaceVisualisation MapIO SimpleCanvas Window Objects Island HexPointSelector SquarePointSelector RandomPointSelector PoissonPointSelector RadialMapShaper RoundMapShaper CrescentMapShaper SquareMapShaper BlobMapShaper GraphVisualisation Generator
 OBJECTS = $(addsuffix .o, $(addprefix $(OBJDIR)/, $(OBJ_NAMES)))
 
 OBJ_VENDOR = VoronoiDiagramGenerator PDSampling
