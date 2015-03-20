@@ -46,8 +46,7 @@ GeneratorFrame::GeneratorFrame(const wxString& title, const wxPoint& pos, const 
 
 	wxLogStream(NULL);
 
-	gen = new Generator(600, 600, 2000);
-	//gen = new Generator(600, 600, 10000);
+	gen = new Generator(10000, 10000, 20000);
 	mapPreview = new CANVAS(this, wxSize(this->GetClientSize().GetWidth()-120, this->GetClientSize().GetHeight()), gen);
 
 	//Initialize Generation toolbox
@@ -225,7 +224,7 @@ wxEND_EVENT_TABLE()
 wxIMPLEMENT_APP(GeneratorApp);
 
 bool GeneratorApp::OnInit() {
-    GeneratorFrame* frame = new GeneratorFrame("Build-an-Isle", wxPoint(100, 100), wxSize(800, 600));
+    GeneratorFrame* frame = new GeneratorFrame("Build-an-Isle", wxPoint(100, 5), wxSize(1200, 1000));
 	bool init = frame->Show(true);
 	frame->InitializeGL();
 	return init;
