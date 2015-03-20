@@ -5,7 +5,7 @@
 
 #include "MapIO.h"
 
-void IO::exportMap(FILE *file, std::vector<Map::Center*> centers) {
+void IO::exportMap(FILE *file, std::vector<Map::Center*> centers, Map::Info info) {
 	std::set<Map::Corner*> corners;
 	std::set<Map::Edge*> edges;
 
@@ -133,6 +133,8 @@ void IO::exportMap(FILE *file, std::vector<Map::Center*> centers) {
 	std::copy(adjacent.begin(), adjacent.end(), adjacent_a);
 
 	// Save to disk
+	// Map info
+	fwrite(&info, sizeof(Map::Info), 1, file);
 	// Center, Corner, Edge
 	fwrite(&centercount, sizeof(int), 1, file);
 	fwrite(io_centers, sizeof(IO::Center), centercount, file);
@@ -181,7 +183,7 @@ Map::Edge *edgeFromId(std::vector<Map::Edge*> edge, int id) {
 	}
 };
 
-std::vector<Map::Center*> IO::importMap(FILE *file) {
+std::vector<Map::Center*> IO::importMap(FILE *file, Map::Info* info) {
 	int centercount;
 	int cornercount;
 	int edgecount;
@@ -192,6 +194,8 @@ std::vector<Map::Center*> IO::importMap(FILE *file) {
 	int touches_count;
 	int protrudes_count;
 	int adjacent_count;
+
+	fread(info, sizeof(Map::Info), 1, file);
 
 	fread(&centercount, sizeof(int), 1, file);
 	IO::Center* io_centers = (IO::Center*) malloc(centercount*sizeof(IO::Center));

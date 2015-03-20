@@ -114,7 +114,8 @@ void GeneratorFrame::OnOpen(wxCommandEvent& event) {
 		wxString CurrentDocPath = ImportDialog->GetPath();
 		FILE * file= fopen(CurrentDocPath.c_str().AsChar(), "rb");
 		if (file != NULL) {
-			mapPreview->GenerateGeometry(IO::importMap(file));
+			Map::Info* info;
+			mapPreview->GenerateGeometry(IO::importMap(file, info));
 			mapPreview->Refresh(false);
 		} else {
 			wxLogMessage("Failed to open file");
@@ -138,7 +139,7 @@ void GeneratorFrame::OnExportMap(wxCommandEvent& event) {
 		wxString CurrentDocPath = ExportDialog->GetPath();
 		FILE * file= fopen(CurrentDocPath.c_str().AsChar(), "wb");
 		if (file != NULL) {
-			IO::exportMap(file, gen->getCenters());
+			IO::exportMap(file, gen->getCenters(), gen->getMapInfo());
 		} else {
 			wxLogMessage("Failed to open file");
 		}

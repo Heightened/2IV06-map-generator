@@ -648,3 +648,7 @@ void Generator::start() {
 	//Add features
 	addFeatures(mshape);
 };
+
+Map::Info Generator::getMapInfo() {
+	return Map::Info(getWidth(), getHeight());
+};

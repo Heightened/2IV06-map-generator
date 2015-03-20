@@ -26,6 +26,17 @@ namespace Map {
 		SUBTROPICAL_DESERT
 	};
 
+	class Info {
+		public:
+			Info(int _width, int _height) {
+				width = _width;
+				height = _height;
+			}
+		
+			int width;
+			int height;
+	};
+	
 	class Center;
 	class Edge;
 	class Corner;
