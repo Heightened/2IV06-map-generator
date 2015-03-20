@@ -9,25 +9,32 @@
 #include <algorithm>
 #include <cstdio>
 
+float floatBetween(float a, float b) {
+    float random = ((float) rand()) / (float) RAND_MAX;
+    float diff = b - a;
+    float r = random * diff;
+    return a + r;
+}
+
 RadialMapShaper::RadialMapShaper(): MapShaper() {
 	srand(time(NULL));
 
 	bumps = 1 + rand() % 5;
-	startAngle = static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/2*PI));
-	dipAngle = static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/2*PI));
-	dipWidth = 0.2f - static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(0.7f - 0.2f)));
+	startAngle = floatBetween(0, 2*PI);
+	dipAngle = floatBetween(0, 2*PI);
+	dipWidth = floatBetween(0.2f, 0.7f);
 }
 
 bool RadialMapShaper::isLand(glm::vec2 p) {
 	float angle = atan2(p.y, p.x);
-	float length = 0.5f * (std::max(abs(p.x), abs(p.y)) + glm::length(p));
+	float length = 0.5f * (std::max(std::abs(p.x), std::abs(p.y)) + glm::length(p));
 
-	float r1 = 0.5f + 0.40f * sin(startAngle + bumps*angle + cos((bumps+3)*angle));
-	float r2 = 0.7f - 0.20f * sin(startAngle + bumps*angle - sin((bumps+2)*angle));
+	float r1 = 0.5f + (0.40f * sin(startAngle + bumps*angle + cos((bumps+3)*angle)));
+	float r2 = 0.7f - (0.20f * sin(startAngle + bumps*angle - sin((bumps+2)*angle)));
 
-	if (abs(angle - dipAngle) < dipWidth ||
-		abs(angle - dipAngle + 2*PI) < dipWidth ||
-		abs(angle - dipAngle - 2*PI) < dipWidth) {
+	if (std::abs(angle - dipAngle) < dipWidth ||
+		std::abs(angle - dipAngle + 2*PI) < dipWidth ||
+		std::abs(angle - dipAngle - 2*PI) < dipWidth) {
 		r1 = 0.2f;
 		r2 = 0.2f;
 	}
