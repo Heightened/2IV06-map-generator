@@ -1,7 +1,6 @@
 #include "RadialMapShaper.h"
 
 #define PI 3.1415926535897932384626433832795
-#define ISLAND_FACTOR 1.07f
 
 #include <cstdlib>
 #include <ctime>
@@ -18,6 +17,8 @@ float floatBetween(float a, float b) {
 
 RadialMapShaper::RadialMapShaper(): MapShaper() {
 	srand(time(NULL));
+
+	ISLAND_FACTOR = floatBetween(1.0f, 2.0f);
 
 	bumps = 1 + rand() % 5;
 	startAngle = floatBetween(0, 2*PI);
