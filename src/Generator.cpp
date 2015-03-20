@@ -47,7 +47,7 @@ Generator::Generator(int _width, int _height, int _sampleSize): centers(), edges
 	height = _height;
 	sampleSize = _sampleSize;
 
-	spring_count = width/6;
+	spring_count = 200;
 
 	pointType = POINTSELECTOR_RANDOM;
 	shaperType = MAPSHAPER_RADIAL;
