@@ -74,6 +74,6 @@ namespace IO {
 		int corner_in;
 	};
 
-	void exportMap(FILE *file, std::vector<Map::Center*> centers);
-	std::vector<Map::Center*> importMap(FILE *file);
+	void exportMap(FILE *file, std::vector<Map::Center*> centers, Map::Info info);
+	std::vector<Map::Center*> importMap(FILE *file, Map::Info* info);
 };

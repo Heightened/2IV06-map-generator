@@ -161,4 +161,6 @@ class Generator {
 		float getHeight() {
 			return (float) height;
 		}
+	
+		Map::Info getMapInfo();
 };
